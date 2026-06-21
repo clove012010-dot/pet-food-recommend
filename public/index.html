@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宠物粮推荐 - 为你的毛孩子找到最适合的粮</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #fdf6f0 0%, #f0e6d8 100%); min-height: 100vh; color: #3e2e23; }
+.container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
+header { text-align: center; margin-bottom: 32px; }
+header h1 { font-size: 28px; color: #8B5E3C; margin-bottom: 8px; }
+header p { color: #a08060; font-size: 14px; }
+.card { background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(139,94,60,0.1); padding: 28px; margin-bottom: 20px; }
+.card h2 { font-size: 18px; color: #8B5E3C; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f0e6d8; }
+.form-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.form-group { flex: 1; min-width: 180px; }
+.form-group label { display: block; font-size: 13px; color: #8B5E3C; margin-bottom: 6px; font-weight: 600; }
+.form-group select, .form-group input { width: 100%; padding: 10px 14px; border: 2px solid #e8d5c4; border-radius: 10px; font-size: 14px; color: #3e2e23; background: #fdfaf7; transition: border-color 0.2s; }
+.form-group select:focus, .form-group input:focus { outline: none; border-color: #c49a6c; }
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.checkbox-item { display: flex; align-items: center; gap: 6px; background: #fdf6f0; padding: 8px 14px; border-radius: 20px; border: 2px solid #e8d5c4; cursor: pointer; font-size: 13px; transition: all 0.2s; user-select: none; }
+.checkbox-item:hover { border-color: #c49a6c; }
+.checkbox-item.selected { background: #8B5E3C; color: #fff; border-color: #8B5E3C; }
+.checkbox-item input { display: none; }
+.btn { display: block; width: 100%; padding: 14px; background: #8B5E3C; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+.btn:hover { background: #a0724d; }
+.btn:disabled { background: #ccc; cursor: not-allowed; }
+/* Results */
+#results { display: none; }
+.result-header { text-align: center; margin-bottom: 20px; }
+.result-header .energy { font-size: 13px; color: #a08060; margin-top: 4px; }
+.disease-info { background: #fff8f0; border-left: 4px solid #e8a838; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #8B5E3C; line-height: 1.8; }
+.food-card { display: flex; gap: 16px; background: #fdfaf7; border: 2px solid #f0e6d8; border-radius: 12px; padding: 18px; margin-bottom: 12px; transition: border-color 0.2s; }
+.food-card:hover { border-color: #c49a6c; }
+.food-rank { width: 40px; height: 40px; background: #8B5E3C; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+.food-rank.top1 { background: #c49a6c; }
+.food-rank.top2 { background: #d4a87c; }
+.food-rank.top3 { background: #e0bc96; }
+.food-body { flex: 1; }
+.food-body h3 { font-size: 16px; color: #3e2e23; margin-bottom: 4px; }
+.food-body .brand { font-size: 13px; color: #a08060; margin-bottom: 6px; }
+.food-body .desc { font-size: 13px; color: #6b5b4f; margin-bottom: 10px; line-height: 1.6; }
+.food-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tag { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #f0e6d8; color: #8B5E3C; }
+.tag.prescription { background: #e8a838; color: #fff; }
+.tag.warning { background: #fde8e8; color: #c44; }
+.tag.good { background: #e0ede0; color: #4a8; }
+.nutrition-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 12px; margin-top: 8px; }
+.nutrition-item { text-align: center; padding: 8px; background: #fff; border-radius: 8px; }
+.nutrition-item .value { font-size: 15px; font-weight: 700; color: #8B5E3C; }
+.nutrition-item .label { font-size: 11px; color: #a08060; }
+.score-badge { font-size: 14px; font-weight: 700; color: #8B5E3C; white-space: nowrap; }
+.warning-list { font-size: 12px; color: #c44; margin-top: 8px; }
+.goodpoint-list { font-size: 12px; color: #4a8; margin-top: 4px; }
+.loading { text-align: center; padding: 40px; color: #a08060; }
+.error { text-align: center; padding: 40px; color: #c44; background: #fff0f0; border-radius: 12px; }
+footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
+footer a { color: #8B5E3C; text-decoration: none; }
+@media (max-width: 600px) {
+  .form-row { flex-direction: column; }
+  .food-card { flex-direction: column; }
+  .nutrition-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🐾 宠物粮智能推荐</h1>
+    <p>输入宠物信息，匹配最适合的粮</p>
+  </header>
+
+  <form id="petForm" class="card">
+    <h2>📋 宠物基本信息</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>宠物种类</label>
+        <select name="species" required><option value="">请选择</option><option value="dog">🐶 狗</option><option value="cat">🐱 猫</option></select>
+      </div>
+      <div class="form-group">
+        <label>品种</label>
+        <input name="breed" placeholder="如：金毛、布偶、中华田园犬..." required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>年龄（月）</label>
+        <input type="number" name="ageMonths" min="1" max="300" placeholder="如：12 = 1岁" required>
+      </div>
+      <div class="form-group">
+        <label>体重（kg）</label>
+        <input type="number" name="weightKg" min="0.5" max="100" step="0.1" placeholder="如：25" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>体态</label>
+        <select name="bodyCondition"><option value="normal">标准体型</option><option value="overweight">偏胖 / 需减重</option><option value="underweight">偏瘦</option></select>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 12px;">🏥 健康情况（可多选）</h2>
+    <div class="checkbox-group" id="diseaseGroup">
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="kidney">肾病/肾功能不全</label>
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="pancreatitis">胰腺炎</label>
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="allergy">食物过敏</label>
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="obesity">肥胖/超重</label>
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="diabetes">糖尿病</label>
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="digestive">肠胃敏感</label>
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="urinary">泌尿系统疾病</label>
+      <label class="checkbox-item"><input type="checkbox" name="diseases" value="heart">心脏病</label>
+    </div>
+
+    <button type="submit" class="btn">🔍 为我推荐宠粮</button>
+  </form>
+
+  <div id="results"></div>
+</div>
+
+<footer>
+  <p>由 OpenCode 搭建 | 数据仅供参考，请遵医嘱</p>
+</footer>
+
+<script>
+// 疾病多选交互
+document.querySelectorAll('.checkbox-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const cb = item.querySelector('input');
+    cb.checked = !cb.checked;
+    item.classList.toggle('selected', cb.checked);
+  });
+});
+
+document.getElementById('petForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button');
+  btn.disabled = true;
+  btn.textContent = '⏳ 正在分析...';
+
+  const results = document.getElementById('results');
+  results.innerHTML = '<div class="card"><div class="loading">正在分析营养成分，为你匹配最佳宠粮...</div></div>';
+  results.style.display = 'block';
+
+  const formData = new FormData(e.target);
+  const diseases = formData.getAll('diseases');
+  const input = {
+    species: formData.get('species'),
+    breed: formData.get('breed'),
+    ageMonths: parseInt(formData.get('ageMonths')),
+    weightKg: parseFloat(formData.get('weightKg')),
+    bodyCondition: formData.get('bodyCondition'),
+    diseases: diseases.length > 0 ? diseases : [],
+  };
+
+  try {
+    const res = await fetch('/api/recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+    const data = await res.json();
+    renderResults(data);
+  } catch (err) {
+    results.innerHTML = '<div class="card"><div class="error">请求失败: ' + err.message + '</div></div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 为我推荐宠粮';
+  }
+});
+
+function renderResults(data) {
+  const { input, diseaseInfo, recommendations, totalMatched } = data;
+  let html = '';
+
+  // 宠物信息摘要
+  html += '<div class="card">';
+  html += '<div class="result-header">';
+  html += `<h2>🐾 ${input.breed} · ${input.species === 'dog' ? '狗狗' : '猫咪'}</h2>`;
+  html += `<div class="energy">${input.ageMonths}月龄 · ${input.weightKg}kg · ${input.lifeStage === 'puppy' ? '幼年期' : input.lifeStage === 'kitten' ? '幼猫期' : input.lifeStage === 'senior' ? '老年期' : '成年期'} · 每日需约 ${input.energy.mer} kcal</div>`;
+  html += '</div>';
+
+  // 疾病提示
+  if (diseaseInfo) {
+    html += '<div class="disease-info">';
+    html += '<strong>⚠ 健康提示：</strong><br>';
+    diseaseInfo.tips.forEach(t => html += `· ${t}<br>`);
+    html += `<br><strong>优选成分：</strong>${diseaseInfo.preferIngredients.join('、')}<br>`;
+    html += `<strong>避免成分：</strong>${diseaseInfo.avoidIngredients.join('、')}`;
+    html += '</div>';
+  }
+
+  html += '</div>';
+
+  // 推荐列表
+  if (recommendations.length === 0) {
+    html += '<div class="card"><div class="loading">暂未找到完全匹配的粮，请尝试放宽条件</div></div>';
+  } else {
+    html += `<div class="card"><h2>🏆 为您推荐（共 ${totalMatched} 款匹配）</h2>`;
+    recommendations.forEach((food, i) => {
+      const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+      html += '<div class="food-card">';
+      html += `<div class="food-rank ${rankClass}">${i + 1}</div>`;
+      html += '<div class="food-body">';
+      html += `<h3>${food.brand} · ${food.name}</h3>`;
+      html += `<div class="brand">${food.desc}</div>`;
+      html += '<div class="food-tags">';
+      food.tags.forEach(t => {
+        const cls = t === '处方粮' ? 'tag prescription' : 'tag';
+        html += `<span class="${cls}">${t}</span>`;
+      });
+      html += '</div>';
+
+      // 营养成分
+      html += '<div class="nutrition-grid">';
+      html += `<div class="nutrition-item"><div class="value">${food.protein}%</div><div class="label">蛋白质</div></div>`;
+      html += `<div class="nutrition-item"><div class="value">${food.fat}%</div><div class="label">脂肪</div></div>`;
+      html += `<div class="nutrition-item"><div class="value">${food.calorie_per_100g}</div><div class="label">kcal/100g</div></div>`;
+      html += `<div class="nutrition-item"><div class="value">${food.phosphorus}%</div><div class="label">磷</div></div>`;
+      html += '</div>';
+
+      // 优劣提示
+      if (food.goodPoints.length) {
+        html += '<div class="goodpoint-list">✅ ' + food.goodPoints.join(' · ') + '</div>';
+      }
+      if (food.warnings.length) {
+        html += '<div class="warning-list">⚠ ' + food.warnings.join(' · ') + '</div>';
+      }
+
+      html += `<div style="margin-top:8px;font-size:12px;color:#a08060;">性价比：${food.price_range}档 · 评分：${food.score}分</div>`;
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('results').innerHTML = html;
+}
+</script>
+</body>
+</html>
