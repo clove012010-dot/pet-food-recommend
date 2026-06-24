@@ -298,7 +298,7 @@ function renderResults(data) {
         html += '<div class="warning-list">⚠ ' + food.warnings.join(' · ') + '</div>';
       }
 
-      html += `<div style="margin-top:8px;font-size:12px;color:#a08060;">性价比：${food.price_range}档 · 评分：${food.score}分</div>`;
+      html += `<div style="margin-top:8px;font-size:12px;color:#a08060;">性价比：${food.price_range}档 · 参考价：${food.price_rmb || '暂无'} · 评分：${food.score}分</div>`;
       html += '</div>';
       html += '</div>';
     });
