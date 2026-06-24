@@ -16,6 +16,46 @@ const MIME = {
 
 const PUBLIC_DIR = path.join(__dirname, "public");
 
+const rateLimitMap = new Map();
+const RATE_LIMIT_MAX = 30;
+const RATE_LIMIT_WINDOW = 10000;
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, []);
+  }
+  const timestamps = rateLimitMap.get(ip);
+  while (timestamps.length > 0 && timestamps[0] < now - RATE_LIMIT_WINDOW) {
+    timestamps.shift();
+  }
+  if (timestamps.length >= RATE_LIMIT_MAX) {
+    return false;
+  }
+  timestamps.push(now);
+  return true;
+}
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, timestamps] of rateLimitMap) {
+    while (timestamps.length > 0 && timestamps[0] < now - RATE_LIMIT_WINDOW) {
+      timestamps.shift();
+    }
+    if (timestamps.length === 0) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, 60000);
+
+function setSecurityHeaders(res) {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+}
+
+const MAX_POST_SIZE = 10240;
+
 function serveStatic(req, res) {
   const reqUrl = new URL(req.url, "http://localhost");
   let filePath = path.join(PUBLIC_DIR, reqUrl.pathname === "/" ? "index.html" : reqUrl.pathname);
@@ -37,6 +77,15 @@ function serveStatic(req, res) {
 }
 
 const server = http.createServer((req, res) => {
+  setSecurityHeaders(res);
+
+  const ip = req.socket.remoteAddress || "unknown";
+  if (!checkRateLimit(ip)) {
+    res.writeHead(429, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Too Many Requests");
+    return;
+  }
+
   // CORS for convenience
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -59,9 +108,20 @@ const server = http.createServer((req, res) => {
 
   // 推荐 API
   if (req.method === "POST" && new URL(req.url, "http://localhost").pathname === "/api/recommend") {
+    const contentLength = parseInt(req.headers["content-length"], 10);
+    if (contentLength > MAX_POST_SIZE) {
+      res.writeHead(413, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end("Payload Too Large");
+      return;
+    }
     let body = "";
     req.on("data", chunk => (body += chunk));
     req.on("end", () => {
+      if (Buffer.byteLength(body) > MAX_POST_SIZE) {
+        res.writeHead(413, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("Payload Too Large");
+        return;
+      }
       try {
         const input = JSON.parse(body);
         const validation = validateInput(input);
@@ -92,7 +152,9 @@ const server = http.createServer((req, res) => {
   }
 });
 
+server.timeout = 15000;
+
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`宠物粮推荐引擎 v2 已启动: http://localhost:${PORT}`);
 });
