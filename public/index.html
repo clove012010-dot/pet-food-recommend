@@ -169,10 +169,7 @@ document.getElementById('breedSelect').addEventListener('change', function() {
   const breedId = this.value;
   const breed = (allBreeds[species] || []).find(b => b.id === breedId);
   if (breed) {
-    const weightInput = document.querySelector('[name="weightKg"]');
-    if (!weightInput.value || weightInput.value === '0') {
-      weightInput.value = breed.typicalWeightKg;
-    }
+    document.querySelector('[name="weightKg"]').value = breed.typicalWeightKg;
   }
 });
 
