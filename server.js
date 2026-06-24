@@ -4,6 +4,7 @@ const path = require("path");
 
 const foods = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "foods.json"), "utf-8")).foods;
 const rules = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "rules.json"), "utf-8")).diseases;
+const breedsData = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "breeds.json"), "utf-8")).breeds;
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -42,13 +43,17 @@ function calcEnergy(species, weightKg, lifeStage, bodyCondition) {
   return { rer: Math.round(rer), mer: Math.round(rer * factor) };
 }
 
-// 根据品种映射大致体重范围
-function guessBreedSize(breed) {
-  const smallBreeds = ["吉娃娃", "泰迪", "贵宾", "博美", "约克夏", "比熊", "雪纳瑞", "巴哥", "柯基", "迷你杜宾", "京巴"];
-  const largeBreeds = ["金毛", "拉布拉多", "哈士奇", "阿拉斯加", "德牧", "边牧", "萨摩耶", "松狮", "古牧", "罗威纳", "大丹", "圣伯纳"];
-  if (smallBreeds.some(b => breed.includes(b))) return "small";
-  if (largeBreeds.some(b => breed.includes(b))) return "large";
-  return "medium";
+// 根据品种ID获取品种信息
+function getBreedInfo(species, breedId) {
+  const list = breedsData[species];
+  if (!list) return null;
+  return list.find(b => b.id === breedId) || null;
+}
+
+// 根据品种获取体型大小
+function getBreedSize(species, breedId) {
+  const info = getBreedInfo(species, breedId);
+  return info ? info.size : "medium";
 }
 
 function getRestrictions(diseaseIds) {
@@ -68,7 +73,10 @@ function getRestrictions(diseaseIds) {
 }
 
 function recommend(input) {
-  const { species, breed, ageMonths, weightKg, diseases, bodyCondition } = input;
+  const { species, breedId, ageMonths, weightKg, diseases, bodyCondition } = input;
+
+  const breedInfo = getBreedInfo(species, breedId);
+  const breedName = breedInfo ? breedInfo.fullName : breedId;
 
   let lifeStage;
   if (species === "dog") {
@@ -81,8 +89,18 @@ function recommend(input) {
     else lifeStage = "adult";
   }
 
-  const breedSize = guessBreedSize(breed);
+  const breedSize = getBreedSize(species, breedId);
   const energy = calcEnergy(species, weightKg, lifeStage, bodyCondition);
+
+  // 品种特有热量调整
+  let breedCalorieFactor = 1.0;
+  let breedTips = null;
+  if (breedInfo && breedInfo.growthNeeds) {
+    breedCalorieFactor = breedInfo.growthNeeds.recommendCalorieFactor || 1.0;
+    breedTips = breedInfo.growthNeeds.tips;
+  }
+  const adjustedMer = Math.round(energy.mer * breedCalorieFactor);
+
   const { restrictions, tips, preferIngredients, avoidIngredients } = getRestrictions(diseases || []);
 
   // 筛选符合条件的粮
@@ -168,11 +186,32 @@ function recommend(input) {
     if (food.tags.includes("无谷")) {
       goodPoints.push("无谷配方");
     }
+
+    // 品种偏好加分
+    if (breedInfo && breedInfo.growthNeeds.preferTags) {
+      const breedPrefers = breedInfo.growthNeeds.preferTags;
+      for (const t of breedPrefers) {
+        if (food.tags.some(ft => ft.includes(t) || t.includes(ft)) || food.desc.includes(t)) {
+          score += 8;
+          goodPoints.push(`适合${breedName}·${t}`);
+        }
+      }
+    }
+    // 品种避雷扣分
+    if (breedInfo && breedInfo.growthNeeds.avoidTags) {
+      const breedAvoids = breedInfo.growthNeeds.avoidTags;
+      for (const t of breedAvoids) {
+        if (food.tags.some(ft => ft.includes(t) || t.includes(ft))) {
+          score -= 10;
+          warnings.push(`${t}可能不适合${breedName}`);
+        }
+      }
+    }
+
     if (food.price_range === "中低" || food.price_range === "中") {
       goodPoints.push("价格友好");
     }
 
-    // 如果有硬性警告，整体降分
     if (warnings.length > 0) {
       score = Math.min(score, 60);
     }
@@ -184,7 +223,15 @@ function recommend(input) {
   scoreDetails.sort((a, b) => b.score - a.score);
 
   return {
-    input: { species, breed, ageMonths, weightKg, lifeStage, breedSize, energy },
+    input: { species, breedId, breedName, ageMonths, weightKg, lifeStage, breedSize, energy: { ...energy, mer: adjustedMer, rawMer: energy.mer } },
+    breedInfo: breedInfo ? {
+      name: breedInfo.fullName,
+      typicalWeightKg: breedInfo.typicalWeightKg,
+      traits: breedInfo.traits,
+      growthTips: breedInfo.growthNeeds.tips,
+      healthRisks: breedInfo.growthNeeds.healthRisks,
+      specialNutrients: breedInfo.growthNeeds.specialNutrients,
+    } : null,
     diseaseInfo: tips.length > 0 ? { ids: diseases, tips, preferIngredients, avoidIngredients } : null,
     recommendations: scoreDetails.slice(0, 5),
     totalMatched: scoreDetails.length,
@@ -192,6 +239,13 @@ function recommend(input) {
 }
 
 const server = http.createServer((req, res) => {
+  // 品种列表 API
+  if (req.method === "GET" && req.url === "/api/breeds") {
+    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(JSON.stringify(breedsData, null, 2));
+    return;
+  }
+
   if (req.method === "POST" && req.url === "/api/recommend") {
     let body = "";
     req.on("data", chunk => (body += chunk));

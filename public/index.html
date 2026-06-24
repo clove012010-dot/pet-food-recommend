@@ -80,7 +80,7 @@ footer a { color: #8B5E3C; text-decoration: none; }
       </div>
       <div class="form-group">
         <label>品种</label>
-        <input name="breed" placeholder="如：金毛、布偶、中华田园犬..." required>
+        <select name="breedId" id="breedSelect" required><option value="">请选择</option></select>
       </div>
     </div>
     <div class="form-row">
@@ -123,6 +123,50 @@ footer a { color: #8B5E3C; text-decoration: none; }
 </footer>
 
 <script>
+// 加载品种列表
+let allBreeds = { cat: [], dog: [] };
+
+async function loadBreeds() {
+  try {
+    const res = await fetch('/api/breeds');
+    allBreeds = await res.json();
+    updateBreedOptions();
+  } catch (e) {
+    console.error('加载品种失败', e);
+  }
+}
+
+function updateBreedOptions() {
+  const species = document.querySelector('[name="species"]').value;
+  const select = document.getElementById('breedSelect');
+  select.innerHTML = '<option value="">请选择品种</option>';
+  const breeds = allBreeds[species] || [];
+  breeds.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b.id;
+    opt.textContent = b.fullName + '（典型体重' + b.typicalWeightKg + 'kg）';
+    if (b.growthNeeds.proneToObesity) opt.textContent += ' ⚠易胖';
+    select.appendChild(opt);
+  });
+}
+
+// 品种变化时自动填充建议体重
+document.getElementById('breedSelect').addEventListener('change', function() {
+  const species = document.querySelector('[name="species"]').value;
+  const breedId = this.value;
+  const breed = (allBreeds[species] || []).find(b => b.id === breedId);
+  if (breed) {
+    const weightInput = document.querySelector('[name="weightKg"]');
+    if (!weightInput.value || weightInput.value === '0') {
+      weightInput.value = breed.typicalWeightKg;
+    }
+  }
+});
+
+// 种类变化时刷新品种列表
+document.querySelector('[name="species"]').addEventListener('change', updateBreedOptions);
+
+loadBreeds();
 // 疾病多选交互
 document.querySelectorAll('.checkbox-item').forEach(item => {
   item.addEventListener('click', () => {
@@ -146,7 +190,7 @@ document.getElementById('petForm').addEventListener('submit', async (e) => {
   const diseases = formData.getAll('diseases');
   const input = {
     species: formData.get('species'),
-    breed: formData.get('breed'),
+    breedId: formData.get('breedId'),
     ageMonths: parseInt(formData.get('ageMonths')),
     weightKg: parseFloat(formData.get('weightKg')),
     bodyCondition: formData.get('bodyCondition'),
@@ -170,15 +214,26 @@ document.getElementById('petForm').addEventListener('submit', async (e) => {
 });
 
 function renderResults(data) {
-  const { input, diseaseInfo, recommendations, totalMatched } = data;
+  const { input, breedInfo, diseaseInfo, recommendations, totalMatched } = data;
   let html = '';
 
   // 宠物信息摘要
   html += '<div class="card">';
   html += '<div class="result-header">';
-  html += `<h2>🐾 ${input.breed} · ${input.species === 'dog' ? '狗狗' : '猫咪'}</h2>`;
+  html += `<h2>🐾 ${input.breedName || input.breedId} · ${input.species === 'dog' ? '狗狗' : '猫咪'}</h2>`;
   html += `<div class="energy">${input.ageMonths}月龄 · ${input.weightKg}kg · ${input.lifeStage === 'puppy' ? '幼年期' : input.lifeStage === 'kitten' ? '幼猫期' : input.lifeStage === 'senior' ? '老年期' : '成年期'} · 每日需约 ${input.energy.mer} kcal</div>`;
   html += '</div>';
+
+  // 品种生长需求提示
+  if (breedInfo) {
+    html += '<div class="disease-info" style="border-left-color:#5b9bd5;">';
+    html += `<strong>🐱 ${breedInfo.name} 品种特征：</strong><br>`;
+    html += `· 典型体重：${breedInfo.typicalWeightKg}kg · ${breedInfo.traits.join('、')}<br>`;
+    html += `<br><strong>🥘 饮食建议：</strong>${breedInfo.growthTips}<br>`;
+    html += `<strong>💊 重点关注营养：</strong>${breedInfo.specialNutrients.join('、')}<br>`;
+    html += `<strong>⚠ 常见健康风险：</strong>${breedInfo.healthRisks.join('、')}`;
+    html += '</div>';
+  }
 
   // 疾病提示
   if (diseaseInfo) {
