@@ -157,7 +157,7 @@ function generateProfileInsights(breedInfo, diseases, lifeStage, bodyCondition, 
   }
 
   if (lifeStage === 'senior') {
-    insights.push('宠物已进入老年期，建议选择易消化、含关节保护成分和抗氧化剂的配方。');
+    insights.push('宠物已进入老年期，已自动叠加老年营养规则（磷/钠/脂肪上限进一步收紧），建议选择易消化、含关节保护成分和抗氧化剂的配方。');
   }
 
   if (bodyCondition === 'underweight') {
@@ -202,8 +202,27 @@ function recommend(input) {
 
   const diseaseIds = diseases || [];
   const diseaseRules = getRulesByIds(diseaseIds);
+
+  // 叠加老年期营养规则
+  let lifeStageRuleSources = [];
+  if (lifeStage === 'senior') {
+    const stageRules = require('./rules').getLifeStageRules(species, lifeStage);
+    if (stageRules.length > 0) {
+      diseaseRules.push(...stageRules);
+      lifeStageRuleSources = stageRules.map(r => r.id);
+    }
+  }
+
   const { restrictions, sources, tips, preferIngredients, avoidIngredients: ruleAvoidIngredients } =
     mergeRestrictions(diseaseRules);
+
+  // 标记老年期规则来源
+  const lifeStageRestrictions = {};
+  for (const src of lifeStageRuleSources) {
+    for (const [k, v] of Object.entries(sources)) {
+      if (sources[k].includes(src)) lifeStageRestrictions[k] = v;
+    }
+  }
 
   const highProteinNeed = restrictions.protein_min && restrictions.protein_min > 28;
 
@@ -370,7 +389,8 @@ function recommend(input) {
       tips,
       preferIngredients,
       avoidIngredients: ruleAvoidIngredients,
-      restrictions
+      restrictions,
+      lifeStageRules: lifeStageRuleSources.length > 0 ? lifeStageRuleSources : undefined
     } : null,
     recommendations,
     excludedFoods: excludedFoods.slice(0, 10).map(e => ({

@@ -89,5 +89,36 @@
       "prefer_ingredients": ["牛磺酸", "Omega-3", "低钠", "辅酶Q10"],
       "avoid_ingredients": ["高钠", "高盐"]
     }
+  ],
+  "life_stage_rules": [
+    {
+      "id": "senior_cat",
+      "applicableTo": "cat",
+      "lifeStage": "senior",
+      "name": "老年猫营养规则",
+      "tips": "老年猫（>10岁）代谢减慢，需低磷护肾、易消化蛋白、关节保护和抗氧化剂",
+      "restrictions": {
+        "phosphorus_max": 0.9,
+        "sodium_max": 0.3,
+        "fiber_min": 2.5,
+        "fat_max": 20
+      },
+      "prefer_ingredients": ["易消化蛋白", "关节保护", "抗氧化剂", "益生菌", "Omega-3"],
+      "avoid_ingredients": ["高磷", "高钠"]
+    },
+    {
+      "id": "senior_dog",
+      "applicableTo": "dog",
+      "lifeStage": "senior",
+      "name": "老年犬营养规则",
+      "tips": "老年犬（>7岁）关节退化风险升高，需控制脂肪、补充葡萄糖胺和软骨素",
+      "restrictions": {
+        "fat_max": 14,
+        "fiber_min": 2.5,
+        "sodium_max": 0.35
+      },
+      "prefer_ingredients": ["葡萄糖胺", "软骨素", "易消化蛋白", "抗氧化剂", "Omega-3"],
+      "avoid_ingredients": ["高脂", "高盐"]
+    }
   ]
 }

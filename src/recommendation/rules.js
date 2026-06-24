@@ -3,13 +3,23 @@ const path = require('path');
 
 const rulesPath = path.join(__dirname, '..', '..', 'data', 'rules.json');
 let rulesData = null;
+let stageRulesData = null;
 
 function loadRules() {
   if (!rulesData) {
     const raw = fs.readFileSync(rulesPath, 'utf-8');
-    rulesData = JSON.parse(raw).diseases;
+    const data = JSON.parse(raw);
+    rulesData = data.diseases;
+    stageRulesData = data.life_stage_rules || [];
   }
   return rulesData;
+}
+
+function getLifeStageRules(species, lifeStage) {
+  loadRules();
+  return stageRulesData.filter(r =>
+    r.applicableTo === species && r.lifeStage === lifeStage
+  );
 }
 
 function getAllRules() {
@@ -65,4 +75,4 @@ function mergeRestrictions(ruleList) {
   };
 }
 
-module.exports = { getAllRules, getRulesByIds, mergeRestrictions };
+module.exports = { getAllRules, getRulesByIds, mergeRestrictions, getLifeStageRules };

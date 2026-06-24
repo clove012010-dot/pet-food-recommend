@@ -234,6 +234,20 @@ describe('API server', () => {
     }
   });
 
+  it('should apply senior cat nutrition rules (phosphorus <= 0.9, sodium <= 0.3)', async () => {
+    const result = await postJSON('/api/recommend', {
+      species: 'cat', breedId: 'british_shorthair', ageMonths: 144, weightKg: 4.5,
+      bodyConditionScore: 5, diseases: []
+    });
+    assert.strictEqual(result.status, 200);
+    const top5 = result.data.recommendations.slice(0, 5);
+    for (const rec of top5) {
+      assert.ok(rec.phosphorus <= 0.9, `Senior cat: expected phosphorus <=0.9 but got ${rec.phosphorus} for ${rec.name}`);
+      assert.ok(rec.sodium <= 0.3, `Senior cat: expected sodium <=0.3 but got ${rec.sodium} for ${rec.name}`);
+    }
+    assert.ok(result.data.profileInsights.some(i => i.includes('老年')));
+  });
+
   it('should reject path traversal in static files', async () => {
     const result = await getJSON('/../server.js');
     assert.ok(result.status === 403 || result.status === 404);
