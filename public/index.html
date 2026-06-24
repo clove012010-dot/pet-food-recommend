@@ -305,6 +305,19 @@ function renderResults(data) {
   if (!recommendations || recommendations.length === 0) {
     html += '<div class="card"><div class="loading">暂未找到完全匹配的粮，请尝试放宽条件</div></div>';
   } else {
+    // 营养对比图表
+    html += '<div class="card">';
+    html += '<div class="toggle-section" onclick="this.nextElementSibling.classList.toggle(\'open\');this.textContent=this.textContent.startsWith(\'📊\')?\'📊 收起营养对比\':\'📊 展开营养对比\'">📊 展开营养对比</div>';
+    html += '<div class="toggle-content" id="chartSection">';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:20px;margin-top:12px">';
+    html += '<div style="flex:1;min-width:300px"><canvas id="radarChart" width="400" height="400" aria-label="营养成分雷达图" style="max-width:100%"></canvas></div>';
+    html += '<div style="flex:1;min-width:300px"><canvas id="phosphorusChart" width="400" height="280" aria-label="磷含量对比条形图" style="max-width:100%"></canvas></div>';
+    html += '</div>';
+    html += '<table style="width:100%;font-size:12px;margin-top:8px;border-collapse:collapse" aria-label="营养对比表格"><thead><tr style="background:#fdf6f0">';
+    html += '<th style="padding:4px;text-align:left">粮</th><th>蛋白%</th><th>脂肪%</th><th>纤维%</th><th>磷%</th><th>钠%</th><th>镁%</th>';
+    html += '</tr></thead><tbody id="chartTableBody"></tbody></table>';
+    html += '</div></div>';
+
     html += `<div class="card"><h2>🏆 为您推荐（共 ${totalMatched} 款通过筛选，${totalExcluded || 0} 款被排除）</h2>`;
     html += '<div class="sort-bar">';
     html += '<button class="sort-btn active" onclick="sortAndRender(\'health\', this)">🛡 健康优先</button>';
@@ -319,6 +332,8 @@ function renderResults(data) {
 
   document.getElementById('results').innerHTML = html;
   renderRecommendationCards(recommendations);
+  const pLimit = diseaseInfo?.restrictions?.phosphorus_max || 1.0;
+  setTimeout(() => drawCharts(recommendations, pLimit), 100);
 }
 
 function renderRecommendationCards(list) {
@@ -400,6 +415,80 @@ function sortAndRender(type, btn) {
   else if (type === 'protein') sorted.sort((a, b) => b.protein - a.protein || b.totalScore - a.totalScore);
   else if (type === 'lowfat') sorted.sort((a, b) => a.fat - b.fat || b.totalScore - a.totalScore);
   renderRecommendationCards(sorted);
+}
+
+function drawCharts(recommendations, phosphorusLimit) {
+  const top5 = recommendations.slice(0, 5);
+  const radarCanvas = document.getElementById('radarChart');
+  if (!radarCanvas) return;
+  const rCtx = radarCanvas.getContext('2d');
+  const dims = ['蛋白质', '脂肪', '纤维', '磷低优', '钠', '镁'];
+  const maxes = [50, 30, 5, 1.5, 0.5, 0.12];
+  const colors = ['#8B5E3C', '#c49a6c', '#e8a838', '#5b9bd5', '#4a8'];
+
+  const cx = 200, cy = 200, r = 150;
+  rCtx.clearRect(0, 0, 400, 400);
+  for (let i = 1; i <= 5; i++) {
+    rCtx.beginPath();
+    for (let j = 0; j < dims.length; j++) {
+      const a = (j / dims.length) * Math.PI * 2 - Math.PI / 2;
+      const rr = (r / 5) * i;
+      const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+      if (j === 0) rCtx.moveTo(x, y); else rCtx.lineTo(x, y);
+    }
+    rCtx.closePath(); rCtx.strokeStyle = '#f0e6d8'; rCtx.stroke();
+  }
+  for (let i = 0; i < dims.length; i++) {
+    const a = (i / dims.length) * Math.PI * 2 - Math.PI / 2;
+    const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+    rCtx.beginPath(); rCtx.moveTo(cx, cy); rCtx.lineTo(x, y);
+    rCtx.strokeStyle = '#e8d5c4'; rCtx.stroke();
+    rCtx.fillStyle = '#3e2e23'; rCtx.font = '11px sans-serif';
+    rCtx.textAlign = a > 1.2 && a < 2 ? 'center' : a > Math.PI / 2 ? 'right' : 'left';
+    rCtx.fillText(dims[i], x + Math.cos(a) * 12, y + Math.sin(a) * 12);
+  }
+  top5.forEach((food, fi) => {
+    const vals = [food.protein, food.fat, food.fiber, Math.max(0, 1.5 - food.phosphorus), food.sodium, food.magnesium];
+    rCtx.beginPath();
+    for (let i = 0; i < dims.length; i++) {
+      const a = (i / dims.length) * Math.PI * 2 - Math.PI / 2;
+      const radius = Math.min(1, vals[i] / maxes[i]) * r;
+      const x = cx + Math.cos(a) * radius, y = cy + Math.sin(a) * radius;
+      if (i === 0) rCtx.moveTo(x, y); else rCtx.lineTo(x, y);
+    }
+    rCtx.closePath(); rCtx.strokeStyle = colors[fi]; rCtx.lineWidth = 2; rCtx.stroke();
+    rCtx.fillStyle = colors[fi] + '20'; rCtx.fill();
+  });
+  rCtx.font = '10px sans-serif';
+  top5.forEach((food, i) => { rCtx.fillStyle = colors[i]; rCtx.fillText(food.brand, 310, 20 + i * 16); });
+
+  const pCanvas = document.getElementById('phosphorusChart');
+  if (!pCanvas) return;
+  const pCtx = pCanvas.getContext('2d');
+  pCtx.clearRect(0, 0, 400, 280);
+  const sorted = [...recommendations].sort((a, b) => a.phosphorus - b.phosphorus).slice(0, 8);
+  const barW = 380, barX = 10, barY = 30, barH = 24, gap = 8;
+  const limit = phosphorusLimit || 1.0;
+  const maxP = Math.max(limit, ...sorted.map(f => f.phosphorus)) * 1.2;
+  sorted.forEach((food, i) => {
+    const y = barY + i * (barH + gap), w = (food.phosphorus / maxP) * barW;
+    pCtx.fillStyle = food.phosphorus <= limit ? '#4a8' : '#e8a838';
+    pCtx.fillRect(barX, y, w, barH);
+    pCtx.fillStyle = '#3e2e23'; pCtx.font = '10px sans-serif';
+    pCtx.fillText(food.brand, barX + 4, y + barH / 2 + 4);
+  });
+  const limitX = barX + (limit / maxP) * barW;
+  pCtx.beginPath(); pCtx.moveTo(limitX, barY - 2);
+  pCtx.lineTo(limitX, barY + sorted.length * (barH + gap));
+  pCtx.strokeStyle = '#c44'; pCtx.setLineDash([4, 4]); pCtx.lineWidth = 2; pCtx.stroke(); pCtx.setLineDash([]);
+  pCtx.fillStyle = '#c44'; pCtx.font = '10px sans-serif';
+  pCtx.fillText('限' + limit + '%', limitX + 4, barY - 4);
+
+  const tbody = document.getElementById('chartTableBody');
+  if (tbody) {
+    top5.forEach(f => tbody.insertAdjacentHTML('beforeend',
+      '<tr><td style="padding:3px">' + f.brand + '</td><td style="text-align:center">' + f.protein + '</td><td style="text-align:center">' + f.fat + '</td><td style="text-align:center">' + f.fiber + '</td><td style="text-align:center">' + f.phosphorus + '</td><td style="text-align:center">' + f.sodium + '</td><td style="text-align:center">' + f.magnesium + '</td></tr>'));
+  }
 }
 </script>
 </body>
