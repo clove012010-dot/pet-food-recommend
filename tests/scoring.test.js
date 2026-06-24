@@ -148,6 +148,23 @@ describe('calcDataConfidence', () => {
   });
 });
 
+describe('carb estimation with ash', () => {
+  it('should use real ash when available for carb calculation', () => {
+    const profile = { species: 'cat', lifeStage: 'adult', breedInfo: null, diseaseRestrictions: { carb_max: 25 } };
+    // food with ash=8, protein=38, fat=18, fiber=3, moisture=10 => carb = 100-38-18-3-10-8 = 23 (<25, should not warn about carb excess)
+    const result = scoreFood(makeFood({ protein: 38, fat: 18, fiber: 3, moisture: 10, ash: 8 }), profile);
+    const hasCarbExcess = result.warnings.some(w => w.includes('碳水') && w.includes('超出'));
+    assert.ok(!hasCarbExcess, 'Should not have carb excess with real ash');
+  });
+
+  it('should warn ash missing when carb_max evaluated and ash not present', () => {
+    const profile = { species: 'cat', lifeStage: 'adult', breedInfo: null, diseaseRestrictions: { carb_max: 20 } };
+    const result = scoreFood(makeFood({ protein: 30, fat: 16, fiber: 3, moisture: 8 }), profile);
+    const hasAshWarning = result.warnings.some(w => w.includes('灰分') && w.includes('缺失'));
+    assert.ok(hasAshWarning, 'Should warn about missing ash data');
+  });
+});
+
 function makeFood(overrides = {}) {
   return {
     id: 999,

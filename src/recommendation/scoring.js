@@ -92,7 +92,11 @@ function calcHealthSafety(food, restrictions, warnings) {
     warnings.push(`热量${food.calorie_per_100g}kcal/100g偏高`);
   }
   if (restrictions.carb_max) {
-    const carb = 100 - food.protein - food.fat - food.fiber - food.moisture - 6;
+    const ash = (typeof food.ash === 'number') ? food.ash : 6;
+    const carb = 100 - food.protein - food.fat - food.fiber - food.moisture - ash;
+    if (typeof food.ash !== 'number') {
+      warnings.push('灰分数据缺失，碳水按默认6%估算');
+    }
     if (carb > restrictions.carb_max) {
       const excess = (carb - restrictions.carb_max) / restrictions.carb_max;
       score -= Math.round(Math.min(20, excess * 40));
