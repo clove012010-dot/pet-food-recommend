@@ -342,6 +342,66 @@
           "specialNutrients": ["葡萄糖胺", "软骨素", "Omega-3"],
           "healthRisks": ["髋关节发育不良", "退行性脊髓病", "胃扭转"]
         }
+      },
+      {
+        "id": "border_collie",
+        "name": "边牧",
+        "fullName": "边境牧羊犬",
+        "weightMaleKg": [18, 23],
+        "weightFemaleKg": [14, 19],
+        "typicalWeightKg": 18,
+        "size": "large",
+        "lifeExpectancy": [12, 15],
+        "traits": ["极聪明", "精力旺盛", "工作犬", "敏捷"],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "边牧智商第一精力充沛，需高蛋白高能量配方维持运动消耗，注意关节保护",
+          "recommendCalorieFactor": 1.2,
+          "avoidTags": ["低蛋白", "低热量"],
+          "preferTags": ["高蛋白", "关节保护", "无谷", "大型犬"],
+          "specialNutrients": ["葡萄糖胺", "软骨素", "Omega-3 DHA健脑"],
+          "healthRisks": ["髋关节发育不良", "柯利犬眼异常(CEA)", "癫痫"]
+        }
+      },
+      {
+        "id": "bichon_frise",
+        "name": "比熊",
+        "fullName": "比熊犬",
+        "weightMaleKg": [5, 10],
+        "weightFemaleKg": [4, 8],
+        "typicalWeightKg": 6,
+        "size": "small",
+        "lifeExpectancy": [12, 15],
+        "traits": ["活泼", "粘人", "卷毛", "不掉毛"],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "比熊白色卷毛需美毛护理，易流泪痕注意低盐配方，小型犬需小颗粒粮",
+          "recommendCalorieFactor": 1.0,
+          "avoidTags": ["高盐", "大颗粒"],
+          "preferTags": ["小型犬", "美毛", "低敏", "颗粒小"],
+          "specialNutrients": ["Omega-3&6 美毛", "牛磺酸", "生物素"],
+          "healthRisks": ["泪痕", "髌骨脱位", "牙结石", "皮肤过敏"]
+        }
+      },
+      {
+        "id": "maltese",
+        "name": "马尔济斯",
+        "fullName": "马尔济斯犬",
+        "weightMaleKg": [2, 4],
+        "weightFemaleKg": [1.8, 3.5],
+        "typicalWeightKg": 3,
+        "size": "small",
+        "lifeExpectancy": [12, 15],
+        "traits": ["温顺", "粘人", "长白毛", "体型小"],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "马尔济斯体型极小代谢快，需超小颗粒粮，长白毛需美毛护理，注意低盐防泪痕",
+          "recommendCalorieFactor": 1.05,
+          "avoidTags": ["大颗粒", "高盐"],
+          "preferTags": ["小型犬", "美毛", "颗粒小", "高消化率"],
+          "specialNutrients": ["Omega-3&6 美毛", "牛磺酸", "生物素"],
+          "healthRisks": ["泪痕", "髌骨脱位", "牙结石", "低血糖"]
+        }
       }
     ]
   }
