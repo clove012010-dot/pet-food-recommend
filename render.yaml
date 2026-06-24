@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: pet-food-recommend
+    env: node
+    buildCommand: ""
+    startCommand: node server.js
+    plan: free
