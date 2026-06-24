@@ -133,6 +133,13 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
       </div>
     </div>
 
+    <h3>🥫 粮食品类筛选</h3>
+    <div class="checkbox-group" id="foodTypeGroup">
+      <label class="checkbox-item selected" id="foodType_dry"><input type="checkbox" name="foodType" value="dry" checked>干粮</label>
+      <label class="checkbox-item" id="foodType_freeze_dried"><input type="checkbox" name="foodType" value="freeze_dried">含冻干</label>
+      <label class="checkbox-item" id="foodType_grain_free"><input type="checkbox" name="foodType" value="grain_free">无谷配方</label>
+    </div>
+
     <h3>💰 偏好设置</h3>
     <div class="form-row">
       <div class="form-group">
@@ -140,9 +147,10 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
         <select name="budgetLevel"><option value="any">不限</option><option value="low">实惠</option><option value="medium">中等</option><option value="high">高端</option></select>
       </div>
       <div class="form-group">
-        <label>粮食品类</label>
-        <select name="foodType"><option value="any">不限</option><option value="dry">干粮</option><option value="freeze_dried">冻干</option></select>
+        <label>护理目标</label>
+        <select name="preferredGoal"><option value="">无特定目标</option><option value="减重">减重</option><option value="美毛">美毛护肤</option><option value="肠胃">肠胃调理</option><option value="低敏">低敏配方</option><option value="关节">关节保护</option><option value="泌尿">泌尿道健康</option><option value="性价比">高性价比</option></select>
       </div>
+    </div>
       <div class="form-group">
         <label>护理目标</label>
         <select name="preferredGoal"><option value="">无特定目标</option><option value="减重">减重</option><option value="美毛">美毛护肤</option><option value="肠胃">肠胃调理</option><option value="低敏">低敏配方</option><option value="关节">关节保护</option><option value="泌尿">泌尿道健康</option><option value="性价比">高性价比</option></select>
@@ -250,7 +258,7 @@ document.getElementById('petForm').addEventListener('submit', async (e) => {
     activityLevel: formData.get('activityLevel') || 'normal',
     targetWeightKg: formData.get('targetWeightKg') ? parseFloat(formData.get('targetWeightKg')) : undefined,
     budgetLevel: formData.get('budgetLevel') || 'any',
-    foodType: formData.get('foodType') || 'any',
+    foodType: formData.getAll('foodType'),
     preferredGoal: formData.get('preferredGoal') || undefined,
     allergies: formData.getAll('allergies'),
     diseases: formData.getAll('diseases'),

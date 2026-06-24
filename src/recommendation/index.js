@@ -101,8 +101,15 @@ function validateInput(input) {
     }
   }
   if (foodType !== undefined && foodType !== null) {
-    if (!['dry', 'wet', 'freeze_dried', 'any'].includes(foodType)) {
-      errors.push('foodType must be "dry", "wet", "freeze_dried", or "any"');
+    if (!Array.isArray(foodType)) {
+      errors.push('foodType must be an array');
+    } else {
+      const validTypes = ['dry', 'freeze_dried', 'grain_free'];
+      for (const ft of foodType) {
+        if (!validTypes.includes(ft)) {
+          errors.push(`foodType contains invalid value: ${ft}`);
+        }
+      }
     }
   }
 
