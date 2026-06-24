@@ -125,20 +125,29 @@ footer a { color: #8B5E3C; text-decoration: none; }
 <script>
 // 加载品种列表
 let allBreeds = { cat: [], dog: [] };
+let breedsLoaded = false;
 
 async function loadBreeds() {
+  const select = document.getElementById('breedSelect');
+  select.disabled = true;
+  select.innerHTML = '<option value="">加载中…</option>';
   try {
     const res = await fetch('/api/breeds');
     allBreeds = await res.json();
+    breedsLoaded = true;
     updateBreedOptions();
   } catch (e) {
-    console.error('加载品种失败', e);
+    select.innerHTML = '<option value="">加载失败，请刷新页面</option>';
+  } finally {
+    select.disabled = false;
   }
 }
 
 function updateBreedOptions() {
   const species = document.querySelector('[name="species"]').value;
+  if (!species) return;
   const select = document.getElementById('breedSelect');
+  const prevVal = select.value;
   select.innerHTML = '<option value="">请选择品种</option>';
   const breeds = allBreeds[species] || [];
   breeds.forEach(b => {
@@ -148,6 +157,10 @@ function updateBreedOptions() {
     if (b.growthNeeds.proneToObesity) opt.textContent += ' ⚠易胖';
     select.appendChild(opt);
   });
+  // 如果之前选的品种在新列表中存在则保留
+  if (prevVal && breeds.some(b => b.id === prevVal)) {
+    select.value = prevVal;
+  }
 }
 
 // 品种变化时自动填充建议体重
@@ -178,6 +191,13 @@ document.querySelectorAll('.checkbox-item').forEach(item => {
 
 document.getElementById('petForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+  const formData = new FormData(e.target);
+  const breedId = formData.get('breedId');
+  if (!breedId) {
+    alert('请先在品种下拉列表中选择宠物品种');
+    return;
+  }
+
   const btn = e.target.querySelector('button');
   btn.disabled = true;
   btn.textContent = '⏳ 正在分析...';
@@ -186,11 +206,10 @@ document.getElementById('petForm').addEventListener('submit', async (e) => {
   results.innerHTML = '<div class="card"><div class="loading">正在分析营养成分，为你匹配最佳宠粮...</div></div>';
   results.style.display = 'block';
 
-  const formData = new FormData(e.target);
   const diseases = formData.getAll('diseases');
   const input = {
     species: formData.get('species'),
-    breedId: formData.get('breedId'),
+    breedId: breedId,
     ageMonths: parseInt(formData.get('ageMonths')),
     weightKg: parseFloat(formData.get('weightKg')),
     bodyCondition: formData.get('bodyCondition'),
