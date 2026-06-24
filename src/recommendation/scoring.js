@@ -185,23 +185,6 @@ function calcPreferenceFit(food, budgetLevel, foodType, preferredGoal, preferred
     }
   }
 
-  if (foodType && foodType.length > 0) {
-    let typeScore = 0;
-    for (const ft of foodType) {
-      if (ft === 'freeze_dried') {
-        if (food.tags.some(t => t.includes('冻干'))) typeScore = Math.max(typeScore, 2);
-      } else if (ft === 'grain_free') {
-        if (food.tags.some(t => t.includes('无谷'))) typeScore = Math.max(typeScore, 2);
-      } else if (ft === 'dry') {
-        typeScore = Math.max(typeScore, 1);
-      }
-    }
-    if (typeScore > 0) {
-      score += typeScore;
-      matchReasons.push('符合粮食品类筛选');
-    }
-  }
-
   if (preferredGoal) {
     if (food.tags.some(t => t.includes(preferredGoal)) || food.desc.includes(preferredGoal)) {
       score += 2;

@@ -177,7 +177,7 @@ function recommend(input) {
     species, breedId, ageMonths, weightKg, bodyConditionScore,
     activityLevel, diseases, allergies, avoidIngredients,
     preferredProteins, sex, neutered, targetWeightKg,
-    budgetLevel, foodType, preferredGoal
+    budgetLevel, foodType: foodTypeFilters, preferredGoal
   } = input;
 
   const lifeStage = determineLifeStage(species, ageMonths);
@@ -287,6 +287,23 @@ function recommend(input) {
       continue;
     }
 
+    // 粮食品类硬筛选 — 全部勾选的条件都必须满足
+    if (foodTypeFilters && foodTypeFilters.length > 0) {
+      let passes = true;
+      for (const ft of foodTypeFilters) {
+        if (ft === 'freeze_dried') {
+          if (!food.tags.some(t => t.includes('冻干') || t.includes('风干') || t.includes('生食'))) { passes = false; break; }
+        } else if (ft === 'grain_free') {
+          if (!food.tags.some(t => t.includes('无谷'))) { passes = false; break; }
+        }
+        // 'dry' 默认通过（所有粮都是干粮）
+      }
+      if (!passes) {
+        excludedFoods.push({ food, reason: `不符合粮食品类筛选：${foodTypeFilters.join('+')}` });
+        continue;
+      }
+    }
+
     candidates.push(food);
   }
 
@@ -296,7 +313,7 @@ function recommend(input) {
     breedInfo,
     diseaseRestrictions: restrictions,
     budgetLevel,
-    foodType,
+    foodType: foodTypeFilters,
     preferredGoal,
     preferredProteins,
     highProteinNeed
