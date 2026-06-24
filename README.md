@@ -7,9 +7,20 @@
 ## 快速启动
 
 ```bash
-node server.js
+npm start
 # 打开 http://localhost:3000
 ```
+
+### 环境变量（可选）
+
+复制 `.env.example` 为 `.env` 并修改：
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `ALLOWED_ORIGINS` | `http://localhost:3000,...` | CORS 白名单，逗号分隔 |
+| `RATE_LIMIT_MAX` | `30` | 速率限制最大请求数 |
+| `RATE_LIMIT_WINDOW` | `10000` | 速率限制窗口（毫秒） |
+| `TRUST_PROXY` | `false` | 启用 `X-Forwarded-For` 限流 IP |
 
 ## 技术栈
 

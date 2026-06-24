@@ -17,8 +17,31 @@ const MIME = {
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 const rateLimitMap = new Map();
-const RATE_LIMIT_MAX = 30;
-const RATE_LIMIT_WINDOW = 10000;
+const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX, 10) || 30;
+const RATE_LIMIT_WINDOW = parseInt(process.env.RATE_LIMIT_WINDOW, 10) || 10000;
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "http://localhost:3000,http://127.0.0.1:3000").split(",").map(s => s.trim());
+const TRUST_PROXY = process.env.TRUST_PROXY === "true";
+
+function getClientIp(req) {
+  if (TRUST_PROXY) {
+    const forwarded = req.headers["x-forwarded-for"];
+    if (forwarded) return forwarded.split(",")[0].trim();
+  }
+  return req.socket.remoteAddress || "unknown";
+}
+
+function getCorsOrigin(req) {
+  const origin = req.headers["origin"];
+  if (!origin) return null;
+  for (const allowed of ALLOWED_ORIGINS) {
+    if (origin === allowed) return allowed;
+  }
+  // localhost in any port always allowed
+  if (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
+    return origin;
+  }
+  return null;
+}
 
 function checkRateLimit(ip) {
   const now = Date.now();
@@ -79,15 +102,19 @@ function serveStatic(req, res) {
 const server = http.createServer((req, res) => {
   setSecurityHeaders(res);
 
-  const ip = req.socket.remoteAddress || "unknown";
+  const ip = getClientIp(req);
   if (!checkRateLimit(ip)) {
     res.writeHead(429, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Too Many Requests");
     return;
   }
 
-  // CORS for convenience
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  // CORS with origin whitelist
+  const corsOrigin = getCorsOrigin(req);
+  if (corsOrigin) {
+    res.setHeader("Access-Control-Allow-Origin", corsOrigin);
+    res.setHeader("Vary", "Origin");
+  }
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
