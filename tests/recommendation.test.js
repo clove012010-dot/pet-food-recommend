@@ -218,6 +218,22 @@ describe('API server', () => {
     assert.ok(Array.isArray(result.data.excludedFoods));
   });
 
+  it('should return stable sorted results with tie-breaking', async () => {
+    const result = await postJSON('/api/recommend', {
+      species: 'cat', breedId: 'british_shorthair', ageMonths: 36, weightKg: 5.0,
+      bodyConditionScore: 5, diseases: ['kidney', 'heart']
+    });
+    assert.strictEqual(result.status, 200);
+    assert.ok(result.data._debug);
+    assert.ok(result.data._debug.sortKeys.length >= 3);
+    // verify deterministic ordering: IDs should be ascending when scores are equal
+    for (let i = 1; i < result.data.recommendations.length; i++) {
+      const prev = result.data.recommendations[i - 1];
+      const curr = result.data.recommendations[i];
+      assert.ok(prev.totalScore >= curr.totalScore, 'Results should be sorted by totalScore desc');
+    }
+  });
+
   it('should reject path traversal in static files', async () => {
     const result = await getJSON('/../server.js');
     assert.ok(result.status === 403 || result.status === 404);

@@ -327,7 +327,14 @@ function recommend(input) {
     return { ...food, ...result };
   });
 
-  scored.sort((a, b) => b.totalScore - a.totalScore);
+  scored.sort((a, b) => {
+    if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+    if (b.scoreBreakdown.healthSafety !== a.scoreBreakdown.healthSafety) return b.scoreBreakdown.healthSafety - a.scoreBreakdown.healthSafety;
+    const breedLifeA = a.scoreBreakdown.breedFit + a.scoreBreakdown.lifeStageFit;
+    const breedLifeB = b.scoreBreakdown.breedFit + b.scoreBreakdown.lifeStageFit;
+    if (breedLifeB !== breedLifeA) return breedLifeB - breedLifeA;
+    return a.id - b.id;
+  });
 
   const recommendations = scored.map((food, index) => {
     const gramsPerDay = Math.round((adjustedMer / food.calorie_per_100g) * 100);
@@ -373,7 +380,10 @@ function recommend(input) {
       reason: e.reason
     })),
     totalMatched: scored.length,
-    totalExcluded: excludedFoods.length
+    totalExcluded: excludedFoods.length,
+    _debug: {
+      sortKeys: ['totalScore', 'healthSafety', 'breedFit+lifeStageFit', 'id']
+    }
   };
 }
 
