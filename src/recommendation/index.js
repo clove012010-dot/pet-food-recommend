@@ -217,6 +217,9 @@ function recommend(input) {
   const hasPancreatitis = diseaseIds.includes('pancreatitis');
   const hasKidney = diseaseIds.includes('kidney');
   const hasHeart = diseaseIds.includes('heart');
+  const hardExcludeFat = hasPancreatitis ? restrictions.fat_max : null;
+  const hardExcludePhosphorus = hasKidney ? restrictions.phosphorus_max : null;
+  const hardExcludeSodium = hasHeart ? restrictions.sodium_max : null;
 
   for (const food of allFoods) {
     if (food.species !== species) {
@@ -274,16 +277,16 @@ function recommend(input) {
       }
     }
 
-    if (hasPancreatitis && food.fat > 25) {
-      excludedFoods.push({ food, reason: `脂肪${food.fat}%过高（胰腺炎需极低脂，上限25%）` });
+    if (hardExcludeFat !== null && food.fat > hardExcludeFat) {
+      excludedFoods.push({ food, reason: `脂肪${food.fat}%超过限制${hardExcludeFat}%（胰腺炎）` });
       continue;
     }
-    if (hasKidney && food.phosphorus > 1.5) {
-      excludedFoods.push({ food, reason: `磷${food.phosphorus}%过高（肾病上限1.5%）` });
+    if (hardExcludePhosphorus !== null && food.phosphorus > hardExcludePhosphorus) {
+      excludedFoods.push({ food, reason: `磷${food.phosphorus}%超过限制${hardExcludePhosphorus}%（肾病）` });
       continue;
     }
-    if (hasHeart && food.sodium > 0.5) {
-      excludedFoods.push({ food, reason: `钠${food.sodium}%过高（心脏病上限0.5%）` });
+    if (hardExcludeSodium !== null && food.sodium > hardExcludeSodium) {
+      excludedFoods.push({ food, reason: `钠${food.sodium}%超过限制${hardExcludeSodium}%（心脏病）` });
       continue;
     }
 

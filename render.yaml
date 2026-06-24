@@ -2,6 +2,6 @@ services:
   - type: web
     name: pet-food-recommend
     env: node
-    buildCommand: ""
+    buildCommand: echo ok
     startCommand: node server.js
     plan: free

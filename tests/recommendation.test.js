@@ -168,7 +168,7 @@ describe('API server', () => {
     assert.strictEqual(result.status, 200);
     const top5 = result.data.recommendations.slice(0, 5);
     for (const rec of top5) {
-      assert.ok(rec.phosphorus <= 1.0, `Expected phosphorus <=1.0 but got ${rec.phosphorus} for ${rec.name}`);
+      assert.ok(rec.phosphorus <= 0.8, `Expected phosphorus <=0.8 but got ${rec.phosphorus} for ${rec.name}`);
     }
   });
 
@@ -180,7 +180,19 @@ describe('API server', () => {
     assert.strictEqual(result.status, 200);
     const top5 = result.data.recommendations.slice(0, 5);
     for (const rec of top5) {
-      assert.ok(rec.fat <= 25, `Expected fat <=25 but got ${rec.fat} for ${rec.name}`);
+      assert.ok(rec.fat <= 12, `Expected fat <=12 but got ${rec.fat} for ${rec.name}`);
+    }
+  });
+
+  it('should exclude high-sodium foods for heart disease', async () => {
+    const result = await postJSON('/api/recommend', {
+      species: 'cat', breedId: 'british_shorthair', ageMonths: 36, weightKg: 5.0,
+      bodyConditionScore: 5, diseases: ['heart']
+    });
+    assert.strictEqual(result.status, 200);
+    const top5 = result.data.recommendations.slice(0, 5);
+    for (const rec of top5) {
+      assert.ok(rec.sodium <= 0.25, `Expected sodium <=0.25 but got ${rec.sodium} for ${rec.name}`);
     }
   });
 
