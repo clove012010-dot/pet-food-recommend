@@ -1,12 +1,14 @@
 {
   "name": "pet-food-recommend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "宠物粮智能推荐引擎 - 支持猫狗品种、疾病、预算等多维度匹配",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test tests/*.test.js"
   },
-  "keywords": [],
+  "keywords": ["pet", "food", "recommendation", "cat", "dog"],
   "author": "",
   "license": "ISC",
   "type": "commonjs"

@@ -2,9 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-const foods = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "foods.json"), "utf-8")).foods;
-const rules = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "rules.json"), "utf-8")).diseases;
-const breedsData = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "breeds.json"), "utf-8")).breeds;
+const { recommend, validateInput } = require("./src/recommendation");
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -16,8 +14,19 @@ const MIME = {
   ".svg": "image/svg+xml",
 };
 
+const PUBLIC_DIR = path.join(__dirname, "public");
+
 function serveStatic(req, res) {
-  let filePath = path.join(__dirname, "public", req.url === "/" ? "index.html" : req.url);
+  const reqUrl = new URL(req.url, "http://localhost");
+  let filePath = path.join(PUBLIC_DIR, reqUrl.pathname === "/" ? "index.html" : reqUrl.pathname);
+  filePath = path.normalize(filePath);
+
+  if (!filePath.startsWith(PUBLIC_DIR)) {
+    res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Forbidden");
+    return true;
+  }
+
   const ext = path.extname(filePath);
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
     res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream" });
@@ -27,249 +36,63 @@ function serveStatic(req, res) {
   return false;
 }
 
-// 计算 RER（静息能量需求）和 MER（维持能量需求）
-function calcEnergy(species, weightKg, lifeStage, bodyCondition) {
-  let rer = 70 * Math.pow(weightKg, 0.75);
-  let factor = 1.6; // 默认成犬
-  if (species === "dog") {
-    if (lifeStage === "puppy") factor = 2.5;
-    else if (lifeStage === "senior") factor = 1.4;
-    else factor = bodyCondition === "overweight" ? 1.2 : 1.6;
-  } else {
-    if (lifeStage === "kitten") factor = 2.5;
-    else if (lifeStage === "senior") factor = 1.2;
-    else factor = bodyCondition === "overweight" ? 0.8 : 1.2;
-  }
-  return { rer: Math.round(rer), mer: Math.round(rer * factor) };
-}
-
-// 根据品种ID获取品种信息
-function getBreedInfo(species, breedId) {
-  const list = breedsData[species];
-  if (!list) return null;
-  return list.find(b => b.id === breedId) || null;
-}
-
-// 根据品种获取体型大小
-function getBreedSize(species, breedId) {
-  const info = getBreedInfo(species, breedId);
-  return info ? info.size : "medium";
-}
-
-function getRestrictions(diseaseIds) {
-  let restrictions = {};
-  let tips = [];
-  let preferIngredients = [];
-  let avoidIngredients = [];
-  for (const did of diseaseIds) {
-    const rule = rules.find(r => r.id === did);
-    if (!rule) continue;
-    tips.push(rule.tips);
-    preferIngredients.push(...rule.prefer_ingredients);
-    avoidIngredients.push(...rule.avoid_ingredients);
-    if (rule.restrictions) Object.assign(restrictions, rule.restrictions);
-  }
-  return { restrictions, tips, preferIngredients: [...new Set(preferIngredients)], avoidIngredients: [...new Set(avoidIngredients)] };
-}
-
-function recommend(input) {
-  const { species, breedId, ageMonths, weightKg, diseases, bodyCondition } = input;
-
-  const breedInfo = getBreedInfo(species, breedId);
-  const breedName = breedInfo ? breedInfo.fullName : breedId;
-
-  let lifeStage;
-  if (species === "dog") {
-    if (ageMonths < 12) lifeStage = "puppy";
-    else if (ageMonths > 84) lifeStage = "senior";
-    else lifeStage = "adult";
-  } else {
-    if (ageMonths < 12) lifeStage = "kitten";
-    else if (ageMonths > 120) lifeStage = "senior";
-    else lifeStage = "adult";
-  }
-
-  const breedSize = getBreedSize(species, breedId);
-  const energy = calcEnergy(species, weightKg, lifeStage, bodyCondition);
-
-  // 品种特有热量调整
-  let breedCalorieFactor = 1.0;
-  let breedTips = null;
-  if (breedInfo && breedInfo.growthNeeds) {
-    breedCalorieFactor = breedInfo.growthNeeds.recommendCalorieFactor || 1.0;
-    breedTips = breedInfo.growthNeeds.tips;
-  }
-  const adjustedMer = Math.round(energy.mer * breedCalorieFactor);
-
-  const { restrictions, tips, preferIngredients, avoidIngredients } = getRestrictions(diseases || []);
-
-  // 筛选符合条件的粮
-  let candidates = foods.filter(f => f.species === species);
-
-  // 年龄阶段匹配
-  if (lifeStage === "puppy" || lifeStage === "kitten") {
-    candidates = candidates.filter(f => f.life_stage === "puppy" || f.life_stage === "kitten" || f.life_stage === "all");
-  } else if (lifeStage === "senior") {
-    candidates = candidates.filter(f => f.life_stage === "senior" || f.life_stage === "all" || f.life_stage === "adult");
-  } else {
-    candidates = candidates.filter(f => f.life_stage === "adult" || f.life_stage === "all");
-  }
-
-  // 品种体型匹配（犬）
-  if (species === "dog" && breedSize) {
-    candidates = candidates.filter(f => f.breed_size === "all" || f.breed_size === breedSize);
-  }
-
-  // 疾病限制过滤
-  let scoreDetails = candidates.map(food => {
-    let score = 100;
-    let warnings = [];
-    let goodPoints = [];
-
-    // 硬性条件打分
-    if (restrictions.protein_max && food.protein > restrictions.protein_max) {
-      score -= 20;
-      warnings.push(`蛋白质${food.protein}%超出推荐上限${restrictions.protein_max}%`);
-    }
-    if (restrictions.protein_min && food.protein < restrictions.protein_min) {
-      score -= 15;
-      warnings.push(`蛋白质${food.protein}%低于推荐下限${restrictions.protein_min}%`);
-    }
-    if (restrictions.fat_max && food.fat > restrictions.fat_max) {
-      score -= 25;
-      warnings.push(`脂肪${food.fat}%超出推荐上限${restrictions.fat_max}%`);
-    }
-    if (restrictions.fiber_min && food.fiber < restrictions.fiber_min) {
-      score -= 5;
-      warnings.push(`纤维素${food.fiber}%低于推荐下限${restrictions.fiber_min}%`);
-    }
-    if (restrictions.phosphorus_max && food.phosphorus > restrictions.phosphorus_max) {
-      score -= 20;
-      warnings.push(`磷${food.phosphorus}%超出推荐上限${restrictions.phosphorus_max}%`);
-    }
-    if (restrictions.sodium_max && food.sodium > restrictions.sodium_max) {
-      score -= 15;
-      warnings.push(`钠${food.sodium}%超出推荐上限${restrictions.sodium_max}%`);
-    }
-    if (restrictions.magnesium_max && food.magnesium > restrictions.magnesium_max) {
-      score -= 15;
-      warnings.push(`镁${food.magnesium}%超出推荐上限${restrictions.magnesium_max}%`);
-    }
-    if (restrictions.calorie_max && food.calorie_per_100g > restrictions.calorie_max) {
-      score -= 10;
-      warnings.push(`热量${food.calorie_per_100g}kcal/100g偏高`);
-    }
-    if (restrictions.carb_max) {
-      const carb = 100 - food.protein - food.fat - food.fiber - food.moisture - 6; // 6%为灰分估算
-      if (carb > restrictions.carb_max) {
-        score -= 20;
-        warnings.push(`碳水约${carb}%超出推荐上限${restrictions.carb_max}%`);
-      }
-    }
-    if (restrictions.protein_source_limit) {
-      if (food.protein_sources.length > restrictions.protein_source_limit) {
-        score -= 30;
-        warnings.push(`含${food.protein_sources.length}种蛋白源，建议单一蛋白源`);
-      } else {
-        goodPoints.push("单一蛋白源，适合过敏体质");
-      }
-    }
-
-    // 加分项
-    if (food.tags.some(t => preferIngredients.some(pi => food.desc.includes(pi) || t.includes(pi)))) {
-      score += 15;
-    }
-    if (food.tags.includes("处方粮")) {
-      score += 20;
-      goodPoints.push("处方级配方");
-    }
-    if (food.tags.includes("无谷")) {
-      goodPoints.push("无谷配方");
-    }
-
-    // 品种偏好加分
-    if (breedInfo && breedInfo.growthNeeds.preferTags) {
-      const breedPrefers = breedInfo.growthNeeds.preferTags;
-      for (const t of breedPrefers) {
-        if (food.tags.some(ft => ft.includes(t) || t.includes(ft)) || food.desc.includes(t)) {
-          score += 8;
-          goodPoints.push(`适合${breedName}·${t}`);
-        }
-      }
-    }
-    // 品种避雷扣分
-    if (breedInfo && breedInfo.growthNeeds.avoidTags) {
-      const breedAvoids = breedInfo.growthNeeds.avoidTags;
-      for (const t of breedAvoids) {
-        if (food.tags.some(ft => ft.includes(t) || t.includes(ft))) {
-          score -= 10;
-          warnings.push(`${t}可能不适合${breedName}`);
-        }
-      }
-    }
-
-    if (food.price_range === "中低" || food.price_range === "中") {
-      goodPoints.push("价格友好");
-    }
-
-    if (warnings.length > 0) {
-      score = Math.min(score, 60);
-    }
-
-    return { ...food, score, warnings, goodPoints };
-  });
-
-  // 按分数排序
-  scoreDetails.sort((a, b) => b.score - a.score);
-
-  return {
-    input: { species, breedId, breedName, ageMonths, weightKg, lifeStage, breedSize, energy: { ...energy, mer: adjustedMer, rawMer: energy.mer } },
-    breedInfo: breedInfo ? {
-      name: breedInfo.fullName,
-      typicalWeightKg: breedInfo.typicalWeightKg,
-      traits: breedInfo.traits,
-      growthTips: breedInfo.growthNeeds.tips,
-      healthRisks: breedInfo.growthNeeds.healthRisks,
-      specialNutrients: breedInfo.growthNeeds.specialNutrients,
-    } : null,
-    diseaseInfo: tips.length > 0 ? { ids: diseases, tips, preferIngredients, avoidIngredients } : null,
-    recommendations: scoreDetails.slice(0, 5),
-    totalMatched: scoreDetails.length,
-  };
-}
-
 const server = http.createServer((req, res) => {
-  // 品种列表 API
-  if (req.method === "GET" && req.url === "/api/breeds") {
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-    res.end(JSON.stringify(breedsData, null, 2));
+  // CORS for convenience
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
     return;
   }
 
-  if (req.method === "POST" && req.url === "/api/recommend") {
+  // 品种列表 API
+  if (req.method === "GET" && new URL(req.url, "http://localhost").pathname === "/api/breeds") {
+    const breedsPath = path.join(__dirname, "data", "breeds.json");
+    const breedsData = JSON.parse(fs.readFileSync(breedsPath, "utf-8"));
+    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(JSON.stringify(breedsData.breeds, null, 2));
+    return;
+  }
+
+  // 推荐 API
+  if (req.method === "POST" && new URL(req.url, "http://localhost").pathname === "/api/recommend") {
     let body = "";
     req.on("data", chunk => (body += chunk));
     req.on("end", () => {
       try {
         const input = JSON.parse(body);
+        const validation = validateInput(input);
+        if (!validation.valid) {
+          res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: "Invalid input", details: validation.errors }, null, 2));
+          return;
+        }
         const result = recommend(input);
+        if (result.error) {
+          res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify(result, null, 2));
+          return;
+        }
         res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
         res.end(JSON.stringify(result, null, 2));
       } catch (e) {
         res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify({ error: e.message }));
+        res.end(JSON.stringify({ error: e.message }, null, 2));
       }
     });
     return;
   }
 
   if (!serveStatic(req, res)) {
-    res.writeHead(404);
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Not found");
   }
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`宠物粮推荐引擎已启动: http://localhost:${PORT}`);
+  console.log(`宠物粮推荐引擎 v2 已启动: http://localhost:${PORT}`);
 });
