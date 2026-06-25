@@ -111,6 +111,8 @@ Page({
     const result = recommend(input);
     if (result.error) { wx.showToast({ title: '推荐失败', icon: 'none' }); return; }
     this.setData({ showResults: true, recommendations: result.recommendations });
+    const pLimit = (result.diseaseInfo && result.diseaseInfo.restrictions && result.diseaseInfo.restrictions.phosphorus_max) || 1.0;
+    setTimeout(() => this.drawCharts(result.recommendations, pLimit), 200);
   },
 
   /* ===== 档案 ===== */
@@ -255,5 +257,88 @@ Page({
       let badge = ''; if (days !== null) { if (days < 0) badge = '过期' + Math.abs(days) + '天'; else if (days <= 7) badge = days + '天'; else badge = days + '天'; }
       return { ...l, daysBadge: badge };
     })});
+  },
+
+  /* ===== 图表 ===== */
+  drawCharts(recommendations, pLimit) {
+    const top5 = recommendations.slice(0, 5);
+    const dims = ['蛋白', '脂肪', '纤维', '磷低优', '钠', '镁'];
+    const maxes = [50, 30, 5, 1.5, 0.5, 0.12];
+    const colors = ['#8B5E3C', '#c49a6c', '#e8a838', '#5b9bd5', '#4a8'];
+
+    // Radar chart
+    wx.createSelectorQuery().select('#radarChart').node(res => {
+      if (!res || !res[0]) return;
+      const node = res[0].node;
+      const dpr = wx.getWindowInfo().pixelRatio;
+      const w = 360, h = 360;
+      node.width = w * dpr; node.height = h * dpr;
+      const ctx = node.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2, cy = h / 2, r = 140;
+      for (let i = 1; i <= 5; i++) {
+        ctx.beginPath();
+        for (let j = 0; j < dims.length; j++) {
+          const a = (j / dims.length) * Math.PI * 2 - Math.PI / 2;
+          const rr = (r / 5) * i;
+          const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+          if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath(); ctx.strokeStyle = '#f0e6d8'; ctx.stroke();
+      }
+      for (let i = 0; i < dims.length; i++) {
+        const a = (i / dims.length) * Math.PI * 2 - Math.PI / 2;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+        ctx.strokeStyle = '#e8d5c4'; ctx.stroke();
+        ctx.fillStyle = '#3e2e23'; ctx.font = '11px sans-serif';
+        ctx.textAlign = a > 1.2 && a < 2 ? 'center' : a > Math.PI / 2 ? 'right' : 'left';
+        ctx.fillText(dims[i], cx + Math.cos(a) * (r + 14), cy + Math.sin(a) * (r + 14));
+      }
+      top5.forEach((food, fi) => {
+        const vals = [food.protein, food.fat, food.fiber, Math.max(0, 1.5 - food.phosphorus), food.sodium, food.magnesium];
+        ctx.beginPath();
+        for (let i = 0; i < dims.length; i++) {
+          const a = (i / dims.length) * Math.PI * 2 - Math.PI / 2;
+          const radius = Math.min(1, vals[i] / maxes[i]) * r;
+          if (i === 0) ctx.moveTo(cx + Math.cos(a) * radius, cy + Math.sin(a) * radius);
+          else ctx.lineTo(cx + Math.cos(a) * radius, cy + Math.sin(a) * radius);
+        }
+        ctx.closePath(); ctx.strokeStyle = colors[fi]; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = colors[fi] + '20'; ctx.fill();
+      });
+      ctx.font = '10px sans-serif';
+      top5.forEach((f, i) => { ctx.fillStyle = colors[i]; ctx.fillText(f.brand, w - 60, 20 + i * 16); });
+    }).exec();
+
+    // Phosphorus bar chart
+    wx.createSelectorQuery().select('#phosphorusChart').node(res => {
+      if (!res || !res[0]) return;
+      const node = res[0].node;
+      const dpr = wx.getWindowInfo().pixelRatio;
+      const w = 360, h = 260;
+      node.width = w * dpr; node.height = h * dpr;
+      const ctx = node.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+
+      const sorted = [...recommendations].sort((a, b) => a.phosphorus - b.phosphorus).slice(0, 8);
+      const barW = w - 20, barX = 10, barY = 30, barH = 24, gap = 6;
+      const limit = pLimit || 1.0;
+      const maxP = Math.max(limit, ...sorted.map(f => f.phosphorus)) * 1.2;
+      sorted.forEach((food, i) => {
+        const y = barY + i * (barH + gap), bw = (food.phosphorus / maxP) * barW;
+        ctx.fillStyle = food.phosphorus <= limit ? '#4a8' : '#e8a838';
+        ctx.fillRect(barX, y, bw, barH);
+        ctx.fillStyle = '#3e2e23'; ctx.font = '10px sans-serif';
+        ctx.fillText(food.brand, barX + 4, y + barH / 2 + 4);
+      });
+      const limitX = barX + (limit / maxP) * barW;
+      ctx.beginPath(); ctx.moveTo(limitX, barY - 2); ctx.lineTo(limitX, barY + sorted.length * (barH + gap));
+      ctx.strokeStyle = '#c44'; ctx.setLineDash([4, 4]); ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#c44'; ctx.font = '10px sans-serif';
+      ctx.fillText('限' + limit + '%', limitX + 4, barY - 4);
+    }).exec();
   },
 });

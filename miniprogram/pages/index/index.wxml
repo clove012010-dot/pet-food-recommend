@@ -77,12 +77,22 @@
   <!-- 推荐结果 -->
   <view wx:if="{{showResults}}" class="card">
     <text class="h2">🏆 推荐结果</text>
-    <canvas type="2d" id="radarChart" style="width:400px;height:400px;max-width:100%" />
-    <canvas type="2d" id="phosphorusChart" style="width:400px;height:280px;max-width:100%" />
+    <canvas type="2d" id="radarChart" style="width:100%;height:360px" />
+    <canvas type="2d" id="phosphorusChart" style="width:100%;height:260px" />
+    <view class="chart-table">
+      <view class="chart-row chart-head">
+        <text>粮</text><text>蛋白</text><text>脂肪</text><text>纤维</text><text>磷</text><text>钠</text><text>镁</text>
+      </view>
+      <view wx:for="{{recommendations.slice(0,5)}}" wx:key="id" class="chart-row">
+        <text>{{item.brand}}</text><text>{{item.protein}}%</text><text>{{item.fat}}%</text><text>{{item.fiber}}%</text><text>{{item.phosphorus}}%</text><text>{{item.sodium}}%</text><text>{{item.magnesium}}%</text>
+      </view>
+    </view>
     <view wx:for="{{recommendations}}" wx:key="id" class="food-card">
       <view class="food-header">
-        <text class="food-name">{{item.brand}} · {{item.name}}</text>
-        <text class="food-score">{{item.totalScore}}分</text>
+        <view class="food-title-wrap">
+          <text class="food-name">{{item.brand}} · {{item.name}}</text>
+        </view>
+        <text class="food-score">{{item.totalScore}}<text class="food-score-unit">分</text></text>
       </view>
       <text class="food-desc">{{item.desc}}</text>
       <view class="nutrition-grid">
