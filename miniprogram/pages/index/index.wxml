@@ -37,14 +37,14 @@
     <view class="form-row">
       <view class="form-group">
         <text class="label">宠物种类</text>
-        <picker bindchange="onSpeciesChange" value="{{formData.speciesIdx}}" range="{{speciesOptions}}">
-          <view class="picker">{{speciesOptions[formData.speciesIdx] || '请选择'}}</view>
+        <picker bindchange="onSpeciesChange" value="{{speciesIdx}}" range="{{speciesOptions}}">
+          <view class="picker">{{speciesIdx >= 0 ? speciesOptions[speciesIdx] : '请选择'}}</view>
         </picker>
       </view>
       <view class="form-group">
         <text class="label">品种</text>
-        <picker bindchange="onBreedChange" value="{{breedIdx}}" range="{{breedNames}}">
-          <view class="picker">{{breedNames[breedIdx] || '请选择'}}</view>
+        <picker bindchange="onBreedChange" value="{{breedIdx}}" range="{{breedNames}}" disabled="{{breedIdx < 0 && breedNames.length === 0}}">
+          <view class="picker">{{breedIdx >= 0 ? breedNames[breedIdx] : (breedNames.length > 0 ? '请选择' : '请先选种类')}}</view>
         </picker>
       </view>
     </view>
@@ -107,9 +107,9 @@
       <view class="form-group"><text class="label">克数</text><input value="{{feedGrams}}" bindinput="onInput" data-field="feedGrams" type="number" placeholder="g"/></view>
     </view>
     <view class="form-row">
-      <view class="form-group"><text class="label">便便 1-5</text><picker bindchange="onFeedStool" value="{{feedStool}}" range="{{scoreOptions}}"><view class="picker">{{feedStool||'-'}}</view></picker></view>
-      <view class="form-group"><text class="label">泪痕 1-5</text><picker bindchange="onFeedTear" value="{{feedTear}}" range="{{scoreOptions}}"><view class="picker">{{feedTear||'-'}}</view></picker></view>
-      <view class="form-group"><text class="label">皮肤 1-5</text><picker bindchange="onFeedSkin" value="{{feedSkin}}" range="{{scoreOptions}}"><view class="picker">{{feedSkin||'-'}}</view></picker></view>
+      <view class="form-group"><text class="label">便便成形度</text><picker bindchange="onFeedStool" value="{{feedStool}}" range="{{stoolOptions}}"><view class="picker">{{feedStoolLabel ? stoolOptions[feedStoolLabel-1] : '-'}}</view></picker></view>
+      <view class="form-group"><text class="label">泪痕量</text><picker bindchange="onFeedTear" value="{{feedTear}}" range="{{tearOptions}}"><view class="picker">{{feedTearLabel ? tearOptions[feedTearLabel-1] : '-'}}</view></picker></view>
+      <view class="form-group"><text class="label">皮肤状态</text><picker bindchange="onFeedSkin" value="{{feedSkin}}" range="{{skinOptions}}"><view class="picker">{{feedSkinLabel ? skinOptions[feedSkinLabel-1] : '-'}}</view></picker></view>
     </view>
     <button class="btn-sm" bindtap="onSubmitFeed">📝 记录</button>
     <view wx:for="{{feedList}}" wx:key="id" class="diary-row">

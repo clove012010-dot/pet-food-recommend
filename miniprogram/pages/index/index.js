@@ -10,19 +10,22 @@ const activityOptions = ['较少', '正常', '较多'];
 const budgetOptions = ['不限', '实惠', '中等', '高端'];
 const goalOptions = ['无', '减重', '美毛', '肠胃', '低敏', '关节', '泌尿', '性价比'];
 const foodTypeOptions = ['干粮', '含冻干', '无谷'];
+const stoolOptions = ['1稀软', '2偏软', '3正常', '4偏干', '5干硬'];
+const tearOptions = ['1无', '2轻微', '3明显', '4偏多', '5严重'];
+const skinOptions = ['1红痒', '2轻屑', '3一般', '4良好', '5健康光泽'];
 
 Page({
   data: {
     currentTab: 'recommend',
     profiles: [], activeProfile: {}, activeIdx: 0, profileNames: [],
     speciesOptions, sexOptions, nuteredOptions, bcsOptions, activityOptions, budgetOptions, goalOptions, foodTypeOptions,
-    breedNames: [], breedIdx: 0,
+    stoolOptions, tearOptions, skinOptions,
+    breedNames: [], speciesIdx: -1, breedIdx: -1,
     sexIdx: 1, nuteredIdx: 1, bcsIdx: 4, activityIdx: 1, budgetIdx: 0, goalIdx: 0,
-    formData: { species: 'cat', breedId: '', ageMonths: 12, weightKg: 5, sex: 'male', neutered: 'unknown', bodyConditionScore: 5, activityLevel: 'normal', budgetLevel: 'any', preferredGoal: '', foodType: ['干粮'], allergies: [], diseases: [] },
+    formData: { species: '', breedId: '', ageMonths: '', weightKg: '', sex: 'male', neutered: 'unknown', bodyConditionScore: 5, activityLevel: 'normal', budgetLevel: 'any', preferredGoal: '', foodType: ['dry'], allergies: [], diseases: [] },
     showResults: false, recommendations: [],
-    feedDate: '', feedFoodName: '', feedGrams: '', feedStool: '', feedTear: '', feedSkin: '', feedNote: '', feedHint: '', feedList: [],
+    feedDate: '', feedFoodName: '', feedGrams: '', feedStool: '', feedStoolLabel: '', feedTear: '', feedTearLabel: '', feedSkin: '', feedSkinLabel: '', feedNote: '', feedHint: '', feedList: [],
     vaxDate: '', vaxName: '', vaxNextDue: '', vaxVet: '', vaxNote: '', vaxHint: '', vaxAlerts: [], vaxList: [],
-    scoreOptions: ['-','1','2','3','4','5'],
   },
 
   onLoad() {
@@ -33,20 +36,42 @@ Page({
     this.initProfileBar();
   },
 
-  initBreeds() {
-    this.breeds = loadBreeds();
+  initBreeds() { this.breeds = loadBreeds(); },
+
+  /* ===== 通用 input handler ===== */
+  onInput(e) {
+    const field = e.currentTarget.dataset.field;
+    if (field.startsWith('feed') || field.startsWith('vax')) {
+      this.setData({ [field]: e.detail.value });
+    } else {
+      this.setData({ ['formData.' + field]: e.detail.value });
+    }
   },
 
+  /* ===== 品种联动 ===== */
   onSpeciesChange(e) {
     const idx = parseInt(e.detail.value);
     const species = idx === 0 ? 'cat' : 'dog';
     const list = (this.breeds[species] || []).map(b => b.fullName + '(' + b.typicalWeightKg + 'kg)');
-    this.setData({ 'formData.species': species, breedNames: list, breedIdx: 0, 'formData.breedId': '' });
+    this.setData({
+      speciesIdx: idx, breedNames: list, breedIdx: -1,
+      'formData.species': species, 'formData.breedId': '', 'formData.ageMonths': '', 'formData.weightKg': ''
+    });
   },
 
-  onBreedChange(e) { this.setData({ breedIdx: parseInt(e.detail.value) }); },
-
-  onInput(e) { this.setData({ ['formData.' + e.currentTarget.dataset.field]: e.detail.value }); },
+  onBreedChange(e) {
+    const idx = parseInt(e.detail.value);
+    const species = this.data.formData.species;
+    const breed = (this.breeds[species] || [])[idx];
+    if (breed) {
+      this.setData({
+        breedIdx: idx,
+        'formData.breedId': breed.id,
+        'formData.weightKg': breed.typicalWeightKg,
+        'formData.ageMonths': this.data.formData.ageMonths || 12
+      });
+    }
+  },
 
   onSexChange(e) { const m = ['unknown','male','female']; this.setData({ sexIdx: parseInt(e.detail.value), 'formData.sex': m[parseInt(e.detail.value)] }); },
   onNeuteredChange(e) { const m = ['unknown', true, false]; this.setData({ nuteredIdx: parseInt(e.detail.value), 'formData.neutered': m[parseInt(e.detail.value)] }); },
@@ -58,10 +83,7 @@ Page({
   onFoodTypeChange(e) {
     const vals = e.detail.value;
     this.setData({ 'formData.foodType': vals.map(v => {
-      if (v === '干粮') return 'dry';
-      if (v === '含冻干') return 'freeze_dried';
-      if (v === '无谷') return 'grain_free';
-      return 'dry';
+      if (v === '干粮') return 'dry'; if (v === '含冻干') return 'freeze_dried'; if (v === '无谷') return 'grain_free'; return 'dry';
     })});
   },
 
@@ -72,15 +94,17 @@ Page({
     if (tab === 'vaccination') this.renderVax();
   },
 
+  /* ===== 推荐 ===== */
   onSubmit() {
     const fd = this.data.formData;
+    if (!fd.species) { wx.showToast({ title: '请先选择种类', icon: 'none' }); return; }
     if (!fd.breedId) { wx.showToast({ title: '请选择品种', icon: 'none' }); return; }
     const input = {
-      species: fd.species, breedId: fd.breedId, ageMonths: parseInt(fd.ageMonths),
-      weightKg: parseFloat(fd.weightKg), bodyConditionScore: fd.bodyConditionScore,
-      activityLevel: fd.activityLevel, diseases: fd.diseases, allergies: fd.allergies,
-      sex: fd.sex, neutered: fd.neutered, budgetLevel: fd.budgetLevel,
-      foodType: fd.foodType, preferredGoal: fd.preferredGoal
+      species: fd.species, breedId: fd.breedId,
+      ageMonths: parseInt(fd.ageMonths) || 12, weightKg: parseFloat(fd.weightKg) || 5,
+      bodyConditionScore: fd.bodyConditionScore, activityLevel: fd.activityLevel,
+      diseases: fd.diseases, allergies: fd.allergies, sex: fd.sex, neutered: fd.neutered,
+      budgetLevel: fd.budgetLevel, foodType: fd.foodType, preferredGoal: fd.preferredGoal
     };
     const v = validateInput(input);
     if (!v.valid) { wx.showToast({ title: v.errors[0], icon: 'none' }); return; }
@@ -89,10 +113,11 @@ Page({
     this.setData({ showResults: true, recommendations: result.recommendations });
   },
 
+  /* ===== 档案 ===== */
   initProfileBar() {
     const all = this.profileStore.loadAll();
     if (all.length === 0) {
-      this.setData({ profiles: [], activeProfile: {}, profileNames: [] });
+      this.setData({ profiles: [], activeProfile: {}, profileNames: [], speciesIdx: -1, breedIdx: -1 });
       return;
     }
     let active = this.profileStore.getActive();
@@ -108,70 +133,70 @@ Page({
     const list = (this.breeds[pf.species] || []).map(b => b.fullName + '(' + b.typicalWeightKg + 'kg)');
     const breedObj = (this.breeds[pf.species] || []).find(b => b.id === pf.breedId);
     this.setData({
-      'formData.species': pf.species, speciesIdx,
-      breedNames: list, breedIdx: breedObj ? list.indexOf(breedObj.fullName + '(' + breedObj.typicalWeightKg + 'kg)') : 0,
-      'formData.breedId': pf.breedId, 'formData.ageMonths': pf.ageMonths, 'formData.weightKg': pf.weightKg,
+      speciesIdx, breedNames: list,
+      breedIdx: breedObj ? list.indexOf(breedObj.fullName + '(' + breedObj.typicalWeightKg + 'kg)') : -1,
+      'formData.species': pf.species, 'formData.breedId': pf.breedId,
+      'formData.ageMonths': pf.ageMonths, 'formData.weightKg': pf.weightKg,
     });
   },
 
   onNewProfile() {
-    const that = this;
-    wx.showModal({ title: '新建档案', editable: true, placeholderText: '起个名字', success(res) {
+    wx.showModal({ title: '新建档案', editable: true, placeholderText: '起个名字', success: (res) => {
       if (!res.confirm || !res.content || !res.content.trim()) return;
-      const p = that.profileStore.create({ name: res.content.trim(), species: 'cat', breedId: 'british_shorthair', ageMonths: 12, weightKg: 4 });
-      that.initProfileBar();
+      this.profileStore.create({ name: res.content.trim(), species: 'cat', breedId: 'british_shorthair', ageMonths: 12, weightKg: 4 });
+      this.initProfileBar();
     }});
   },
-
-  onCopyProfile() {
-    const active = this.profileStore.getActive();
-    if (!active) return;
-    this.profileStore.duplicate(active.id);
-    this.initProfileBar();
-  },
-
+  onCopyProfile() { const a = this.profileStore.getActive(); if (a) { this.profileStore.duplicate(a.id); this.initProfileBar(); } },
   onSaveProfile() {
     const pf = PetProfile.normalizeProfile(this.data.formData);
     const v = PetProfile.validateProfile(pf);
     if (!v.valid) { wx.showToast({ title: v.errors[0], icon: 'none' }); return; }
-    const active = this.profileStore.getActive();
-    if (active) this.profileStore.update(active.id, pf);
+    const a = this.profileStore.getActive();
+    if (a) this.profileStore.update(a.id, pf);
     this.initProfileBar();
     wx.showToast({ title: '已保存', icon: 'success' });
   },
-
   onDeleteProfile() {
-    const active = this.profileStore.getActive();
-    if (!active) return;
-    const that = this;
-    wx.showModal({ title: '删除', content: '确定删除「' + active.name + '」？', success(res) {
+    const a = this.profileStore.getActive(); if (!a) return;
+    wx.showModal({ title: '删除', content: '确定删除「' + a.name + '」？', success: (res) => {
       if (!res.confirm) return;
-      that.profileStore.delete(active.id);
-      that.initProfileBar();
+      this.profileStore.delete(a.id);
+      this.initProfileBar();
     }});
   },
-
   onSwitchProfile(e) {
     const idx = parseInt(e.detail.value);
-    const p = this.data.profiles[idx];
-    if (!p) return;
+    const p = this.data.profiles[idx]; if (!p) return;
     this.profileStore.setActiveId(p.id);
     this.initProfileBar();
   },
-
   onProfileNameSave(e) {
-    const name = e.detail.value;
-    if (!name.trim()) return;
-    const active = this.profileStore.getActive();
-    if (active) this.profileStore.update(active.id, { name: name.trim() });
+    const name = e.detail.value; if (!name.trim()) return;
+    const a = this.profileStore.getActive();
+    if (a) this.profileStore.update(a.id, { name: name.trim() });
   },
 
   /* ===== 喂食日记 ===== */
+  onFeedDate(e) { this.setData({ feedDate: e.detail.value }); },
+  onFeedStool(e) {
+    const v = parseInt(e.detail.value);
+    this.setData({ feedStool: v, feedStoolLabel: v });
+  },
+  onFeedTear(e) {
+    const v = parseInt(e.detail.value);
+    this.setData({ feedTear: v, feedTearLabel: v });
+  },
+  onFeedSkin(e) {
+    const v = parseInt(e.detail.value);
+    this.setData({ feedSkin: v, feedSkinLabel: v });
+  },
+
   onSubmitFeed() {
     const active = this.profileStore.getActive();
     if (!active) { wx.showToast({ title: '请先创建档案', icon: 'none' }); return; }
     const log = FeedingLog.feedingLogFromFormData({
-      date: this.data.feedDate, foodId: this.data.feedFoodId, foodName: this.data.feedFoodName,
+      date: this.data.feedDate, foodId: 'manual', foodName: this.data.feedFoodName,
       grams: this.data.feedGrams, stoolScore: this.data.feedStool, tearStainScore: this.data.feedTear,
       skinScore: this.data.feedSkin, note: this.data.feedNote
     }, active.id);
@@ -184,18 +209,19 @@ Page({
 
   onDeleteFeed(e) {
     const id = e.currentTarget.dataset.id;
-    const that = this;
-    wx.showModal({ title: '删除', content: '删除这条记录？', success(res) { if (res.confirm) { that.feedingLogStore.delete(id); that.renderFeeding(); } } });
+    wx.showModal({ title: '删除', content: '删除这条记录？', success: (res) => { if (res.confirm) { this.feedingLogStore.delete(id); this.renderFeeding(); } } });
   },
 
   renderFeeding() {
     const active = this.profileStore.getActive();
     if (!active) { this.setData({ feedHint: '请先创建宠物档案', feedList: [] }); return; }
-    const logs = this.feedingLogStore.filterByPet(active.id).slice(0, 20);
-    this.setData({ feedHint: '当前为 ' + active.name + ' 记录', feedList: logs });
+    this.setData({ feedHint: '当前为 ' + active.name + ' 记录', feedList: this.feedingLogStore.filterByPet(active.id).slice(0, 20) });
   },
 
   /* ===== 疫苗日记 ===== */
+  onVaxDate(e) { this.setData({ vaxDate: e.detail.value }); },
+  onVaxNext(e) { this.setData({ vaxNextDue: e.detail.value }); },
+
   onSubmitVax() {
     const active = this.profileStore.getActive();
     if (!active) { wx.showToast({ title: '请先创建档案', icon: 'none' }); return; }
@@ -212,8 +238,7 @@ Page({
 
   onDeleteVax(e) {
     const id = e.currentTarget.dataset.id;
-    const that = this;
-    wx.showModal({ title: '删除', content: '删除这条记录？', success(res) { if (res.confirm) { that.vaccinationLogStore.delete(id); that.renderVax(); } } });
+    wx.showModal({ title: '删除', content: '删除这条记录？', success: (res) => { if (res.confirm) { this.vaccinationLogStore.delete(id); this.renderVax(); } } });
   },
 
   renderVax() {
