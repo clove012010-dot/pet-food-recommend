@@ -65,6 +65,24 @@ header p { color: #a08060; font-size: 14px; }
 .warning-list { font-size: 12px; color: #c44; margin-top: 6px; }
 .goodpoint-list { font-size: 12px; color: #4a8; margin-top: 4px; }
 .disclaimer { text-align: center; padding: 14px; font-size: 11px; color: #c49a6c; background: #fff8f0; border-radius: 10px; margin-top: 16px; line-height: 1.6; }
+/* Profile bar */
+.profile-bar { display: flex; align-items: center; gap: 12px; padding: 14px 18px !important; }
+.profile-current { flex: 1; display: flex; align-items: center; gap: 8px; }
+.profile-current span { white-space: nowrap; }
+.profile-actions { display: flex; align-items: center; gap: 6px; }
+.profile-btn { padding: 5px 10px; border: 2px solid #e8d5c4; border-radius: 8px; background: #fff; color: #8B5E3C; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.profile-btn:hover { border-color: #c49a6c; }
+.profile-btn.primary { background: #8B5E3C; color: #fff; border-color: #8B5E3C; }
+.profile-btn.primary:hover { background: #a0724d; }
+.profile-btn.danger:hover { background: #fde8e8; border-color: #c44; color: #c44; }
+.profile-count { background: #fdf6f0; color: #a08060; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+.profile-empty { border: 2px dashed #e8d5c4 !important; background: #fffdf8 !important; }
+#profileNameInput:focus { outline: none; border-bottom: 2px solid #c49a6c; }
+#profileSelect { padding: 4px 8px; font-size: 13px; }
+@media (max-width: 600px) {
+  .profile-bar { flex-direction: column; align-items: stretch; }
+  .profile-actions { justify-content: center; flex-wrap: wrap; }
+}
 .loading { text-align: center; padding: 40px; color: #a08060; }
 footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
 .toggle-section { cursor: pointer; user-select: none; color: #8B5E3C; font-size: 14px; font-weight: 600; padding: 8px 0; }
@@ -85,6 +103,30 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
     <h1>🐾 宠物粮智能推荐 v2</h1>
     <p>多维度分析，为你的毛孩子找到最适合的粮</p>
   </header>
+
+  <!-- 多宠物档案栏（无 JS，由 #19 接入） -->
+  <div id="profileEmpty" style="display:none" class="profile-empty card">
+    <div style="text-align:center;padding:20px;color:#a08060">
+      <div style="font-size:32px;margin-bottom:8px">🐾</div>
+      <p style="margin-bottom:12px">还没有宠物档案</p>
+      <button class="profile-btn primary" style="font-size:14px;padding:8px 20px">🐾 创建第一个档案</button>
+    </div>
+  </div>
+
+  <div id="profileBar" style="display:none" class="profile-bar card">
+    <div class="profile-current">
+      <span style="font-size:12px;color:#a08060">当前档案</span>
+      <input id="profileNameInput" style="border:none;background:transparent;font-size:16px;font-weight:600;color:#3e2e23;width:auto;min-width:80px;padding:2px 4px" value="未命名" readonly>
+      <span class="profile-count">1/1</span>
+    </div>
+    <div class="profile-actions">
+      <select id="profileSelect" class="profile-btn" style="min-width:80px"><option>未命名</option></select>
+      <button class="profile-btn" title="新建">➕</button>
+      <button class="profile-btn" title="复制">📋</button>
+      <button class="profile-btn" title="保存">💾</button>
+      <button class="profile-btn danger" title="删除">🗑</button>
+    </div>
+  </div>
 
   <form id="petForm" class="card">
     <h2>📋 基本信息</h2>
