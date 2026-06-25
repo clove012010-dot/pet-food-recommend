@@ -226,6 +226,7 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
   </footer>
 </div>
 
+<script src="pet-profile.js"></script>
 <script>
 let allBreeds = { cat: [], dog: [] };
 let currentSort = 'health';
@@ -237,7 +238,7 @@ async function loadBreeds() {
   select.innerHTML = '<option value="">加载中…</option>';
   try { const res = await fetch('/api/breeds'); allBreeds = await res.json(); updateBreedOptions(); }
   catch (e) { select.innerHTML = '<option value="">加载失败，刷新试试</option>'; }
-  finally { select.disabled = false; }
+  finally { select.disabled = false; initProfileBar(); }
 }
 function updateBreedOptions() {
   const species = document.querySelector('[name="species"]').value;
@@ -261,6 +262,164 @@ document.getElementById('breedSelect').addEventListener('change', function () {
 });
 document.querySelector('[name="species"]').addEventListener('change', updateBreedOptions);
 loadBreeds();
+
+/* ===== 多宠物档案交互 ===== */
+const profileStore = new PetProfile.ProfileStore(window.localStorage);
+
+function getBreedName(species, breedId) {
+  if (!breedId) return '(未选品种)';
+  const list = allBreeds[species];
+  if (!list) return breedId;
+  const b = list.find(b => b.id === breedId);
+  return b ? b.fullName : breedId;
+}
+
+function getFormValues() {
+  const fd = new FormData(document.getElementById('petForm'));
+  return PetProfile.ProfileStore.profileFromFormData(fd);
+}
+
+function setCheckboxes(name, values) {
+  const arr = Array.isArray(values) ? values : [];
+  document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+    cb.checked = arr.includes(cb.value);
+    cb.parentElement.classList.toggle('selected', cb.checked);
+  });
+}
+
+function setFormValues(p) {
+  const pf = PetProfile.normalizeProfile(p);
+  document.querySelector('[name="species"]').value = pf.species || '';
+  updateBreedOptions();
+  setTimeout(() => {
+    document.getElementById('breedSelect').value = pf.breedId || '';
+    document.querySelector('[name="ageMonths"]').value = pf.ageMonths;
+    document.querySelector('[name="weightKg"]').value = pf.weightKg;
+    document.querySelector('[name="sex"]').value = pf.sex;
+    const neuteredVal = pf.neutered === 'true' ? 'true' : (pf.neutered === 'false' ? 'false' : 'unknown');
+    document.querySelector('[name="neutered"]').value = neuteredVal;
+    document.querySelector('[name="bodyConditionScore"]').value = pf.bodyConditionScore || 5;
+    document.querySelector('[name="activityLevel"]').value = pf.activityLevel || 'normal';
+    document.querySelector('[name="targetWeightKg"]').value = pf.targetWeightKg || '';
+    document.querySelector('[name="budgetLevel"]').value = pf.budgetLevel || 'any';
+    document.querySelector('[name="preferredGoal"]').value = pf.preferredGoal || '';
+    setCheckboxes('foodType', pf.foodType);
+    setCheckboxes('allergies', pf.allergies);
+    setCheckboxes('diseases', pf.diseases);
+    document.getElementById('profileNameInput').value = pf.name || '未命名';
+  }, 100);
+}
+
+function renderProfileBar() {
+  const all = profileStore.loadAll();
+  const active = profileStore.getActive();
+  const emptyEl = document.getElementById('profileEmpty');
+  const barEl = document.getElementById('profileBar');
+
+  if (all.length === 0) {
+    emptyEl.style.display = 'block';
+    barEl.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  barEl.style.display = 'flex';
+
+  document.getElementById('profileNameInput').value = active ? active.name : '未命名';
+  const countEl = document.querySelector('.profile-count');
+  if (countEl) countEl.textContent = (active ? (all.findIndex(p => p.id === active.id) + 1) : 0) + '/' + all.length;
+
+  const sel = document.getElementById('profileSelect');
+  sel.innerHTML = '';
+  all.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = p.name + ' (' + getBreedName(p.species, p.breedId) + ')';
+    if (active && p.id === active.id) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function initProfileBar() {
+  let active = profileStore.getActive();
+  if (!active) {
+    const all = profileStore.loadAll();
+    if (all.length > 0) {
+      profileStore.setActiveId(all[0].id);
+      active = all[0];
+    }
+  }
+  if (active) setFormValues(active);
+  renderProfileBar();
+}
+
+function autoSaveProfile() {
+  const active = profileStore.getActive();
+  if (!active) return;
+  const pf = getFormValues();
+  pf.name = document.getElementById('profileNameInput').value || '未命名';
+  const v = PetProfile.validateProfile(pf);
+  if (!v.valid) return;
+  profileStore.update(active.id, pf);
+  renderProfileBar();
+}
+
+// Event handlers
+document.getElementById('profileEmpty').querySelector('button').addEventListener('click', () => {
+  const name = prompt('给宠物起个名字：', '小花');
+  if (!name || !name.trim()) return;
+  const p = profileStore.create({ name: name.trim(), species: 'cat', breedId: 'british_shorthair', ageMonths: 12, weightKg: 4 });
+  setFormValues(p);
+  renderProfileBar();
+});
+
+document.getElementById('profileBar').querySelector('[title="新建"]').addEventListener('click', () => {
+  const name = prompt('给宠物起个名字：', '新档案');
+  if (!name || !name.trim()) return;
+  const p = profileStore.create({ name: name.trim(), species: 'cat', breedId: 'british_shorthair', ageMonths: 12, weightKg: 4 });
+  setFormValues(p);
+  renderProfileBar();
+});
+
+document.getElementById('profileBar').querySelector('[title="复制"]').addEventListener('click', () => {
+  const active = profileStore.getActive();
+  if (!active) return;
+  const dup = profileStore.duplicate(active.id);
+  if (!dup) return;
+  setFormValues(dup);
+  renderProfileBar();
+});
+
+document.getElementById('profileBar').querySelector('[title="保存"]').addEventListener('click', () => {
+  autoSaveProfile();
+  alert('已保存');
+});
+
+document.getElementById('profileBar').querySelector('[title="删除"]').addEventListener('click', () => {
+  const active = profileStore.getActive();
+  if (!active) return;
+  if (!confirm(`确定删除「${active.name}」？`)) return;
+  profileStore.delete(active.id);
+  const next = profileStore.getActive();
+  if (next) setFormValues(next);
+  else document.getElementById('petForm').reset();
+  renderProfileBar();
+});
+
+document.getElementById('profileSelect').addEventListener('change', function() {
+  const id = this.value;
+  profileStore.setActiveId(id);
+  const p = profileStore.getById(id);
+  if (p) setFormValues(p);
+  renderProfileBar();
+  document.getElementById('results').style.display = 'none';
+});
+
+document.getElementById('profileNameInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    autoSaveProfile();
+    e.preventDefault();
+  }
+});
 
 // checkbox interactions
 document.querySelectorAll('.checkbox-item').forEach(item => {
@@ -300,6 +459,8 @@ document.getElementById('petForm').addEventListener('submit', async (e) => {
     allergies: formData.getAll('allergies'),
     diseases: formData.getAll('diseases'),
   };
+
+  autoSaveProfile();
 
   try {
     const res = await fetch('/api/recommend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) });
