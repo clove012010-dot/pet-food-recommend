@@ -289,6 +289,31 @@ describe('API server', () => {
     assert.ok(result.data.profileInsights.some(i => i.includes('老年')));
   });
 
+  it('should return >= 3 kitten recommendations for 4-month-old kitten', async () => {
+    const result = await postJSON('/api/recommend', {
+      species: 'cat', breedId: 'british_shorthair', ageMonths: 4, weightKg: 1.2,
+      bodyConditionScore: 5, diseases: []
+    });
+    assert.strictEqual(result.status, 200);
+    assert.ok(result.data.recommendations.length >= 3);
+    const top3 = result.data.recommendations.slice(0, 3);
+    const kittenCount = top3.filter(r => r.life_stage === 'kitten').length;
+    assert.ok(kittenCount >= 2, `Expected >=2 kitten among top3, got ${kittenCount}`);
+  });
+
+  it('should recommend senior small breed dog foods', async () => {
+    const result = await postJSON('/api/recommend', {
+      species: 'dog', breedId: 'pomeranian', ageMonths: 144, weightKg: 3,
+      bodyConditionScore: 5, diseases: []
+    });
+    assert.strictEqual(result.status, 200);
+    const top3 = result.data.recommendations.slice(0, 3);
+    const sizeOK = top3.filter(r => r.breed_size === 'small' || r.breed_size === 'all').length;
+    const stageOK = top3.filter(r => r.life_stage === 'senior' || r.life_stage === 'adult').length;
+    assert.ok(sizeOK >= 2, `Expected >=2 small/all among top3, got ${sizeOK}`);
+    assert.ok(stageOK >= 2, `Expected >=2 senior/adult among top3, got ${stageOK}`);
+  });
+
   it('should reject path traversal in static files', async () => {
     const result = await getJSON('/../server.js');
     assert.ok(result.status === 403 || result.status === 404);
