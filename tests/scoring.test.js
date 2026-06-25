@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
-const { scoreFood } = require('../src/recommendation/scoring');
+const { scoreFood } = require('../src/recommendation');
 
 describe('calcHealthSafety', () => {
   const baseProfile = { species: 'cat', lifeStage: 'adult', breedInfo: null };

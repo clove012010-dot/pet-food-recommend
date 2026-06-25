@@ -4,9 +4,7 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
-const { mergeRestrictions, getRulesByIds } = require('../src/recommendation/rules');
-const { validateInput } = require('../src/recommendation');
-const { calcEnergy } = require('../src/recommendation/energy');
+const { mergeRestrictions, getRulesByIds, validateInput, calcEnergy } = require('../src/recommendation');
 
 describe('mergeRestrictions', () => {
   it('should merge max restrictions by taking the smaller value', () => {
