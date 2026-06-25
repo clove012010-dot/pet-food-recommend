@@ -1,0 +1,8 @@
+{
+  "pages": ["pages/index/index"],
+  "window": {
+    "navigationBarTitleText": "宠物粮推荐",
+    "navigationBarBackgroundColor": "#fdf6f0",
+    "navigationBarTextStyle": "black"
+  }
+}

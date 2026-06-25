@@ -1,0 +1,6 @@
+{
+  "appid": "touristappid",
+  "setting": { "es6": true, "minified": true, "postcss": true },
+  "miniprogramRoot": "./",
+  "projectname": "pet-food-recommend"
+}

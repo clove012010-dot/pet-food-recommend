@@ -1,6 +1,5 @@
 /* ===== energy ===== */
-const fs = require('fs');
-const path = require('path');
+const { loadRules, loadLifeStageRules, loadFoods, loadBreeds } = require('./data');
 
 function calcEnergy(species, weightKg, lifeStage, bodyCondition, activityLevel, isNeutered) {
   const rer = 70 * Math.pow(weightKg, 0.75);
@@ -36,29 +35,27 @@ function calcEnergy(species, weightKg, lifeStage, bodyCondition, activityLevel, 
 }
 
 /* ===== rules ===== */
-const rulesPath = path.join(__dirname, '..', 'data', 'rules.json');
-let rulesData = null;
-let stageRulesData = null;
+let rulesDataCache = null;
+let stageRulesDataCache = null;
 
-function loadRules() {
-  if (!rulesData) {
-    const data = JSON.parse(fs.readFileSync(rulesPath, 'utf-8'));
-    rulesData = data.diseases;
-    stageRulesData = data.life_stage_rules || [];
+function getRules() {
+  if (!rulesDataCache) {
+    rulesDataCache = loadRules();
+    stageRulesDataCache = loadLifeStageRules();
   }
-  return rulesData;
+  return rulesDataCache;
 }
 
 function getLifeStageRules(species, lifeStage) {
-  loadRules();
-  return stageRulesData.filter(r => r.applicableTo === species && r.lifeStage === lifeStage);
+  getRules();
+  return (stageRulesDataCache || []).filter(r => r.applicableTo === species && r.lifeStage === lifeStage);
 }
 
-function getAllRules() { return loadRules(); }
+function getAllRules() { return getRules(); }
 
 function getRulesByIds(ids) {
   if (!ids || !ids.length) return [];
-  return loadRules().filter(r => ids.includes(r.id));
+  return getRules().filter(r => ids.includes(r.id));
 }
 
 function mergeRestrictions(ruleList) {
@@ -247,23 +244,21 @@ function scoreFood(food, profile) {
 }
 
 /* ===== recommendation engine ===== */
-const foodsPath = path.join(__dirname, '..', 'data', 'foods.json');
-const breedsPath = path.join(__dirname, '..', 'data', 'breeds.json');
 let foodsData = null;
 let breedsData = null;
 
-function loadFoods() {
-  if (!foodsData) foodsData = JSON.parse(fs.readFileSync(foodsPath, 'utf-8')).foods;
+function getFoods() {
+  if (!foodsData) foodsData = loadFoods();
   return foodsData;
 }
 
-function loadBreeds() {
-  if (!breedsData) breedsData = JSON.parse(fs.readFileSync(breedsPath, 'utf-8')).breeds;
+function getBreeds() {
+  if (!breedsData) breedsData = loadBreeds();
   return breedsData;
 }
 
 function getBreedInfo(species, breedId) {
-  const list = loadBreeds()[species];
+  const list = getBreeds()[species];
   if (!list) return null;
   return list.find(b => b.id === breedId) || null;
 }
@@ -393,7 +388,7 @@ function recommend(input) {
 
   const highProteinNeed = restrictions.protein_min && restrictions.protein_min > 28;
 
-  const allFoods = loadFoods();
+  const allFoods = getFoods();
   const candidates = [];
   const excludedFoods = [];
 
