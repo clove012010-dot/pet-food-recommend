@@ -1,81 +1,64 @@
-# 🐾 宠物粮智能推荐 v2
+# 🐾 宠物粮智能推荐 — 微信小程序版
 
-多维度宠物粮推荐引擎，支持 20 种猫 + 20 种犬，60 款热门宠粮，8 种疾病营养匹
+## 快速开始
 
-配。
-
-## 快速启动
-
-```bash
-npm start
-# 打开 http://localhost:3000
-```
-
-### 环境变量（可选）
-
-复制 `.env.example` 为 `.env` 并修改：
-
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `ALLOWED_ORIGINS` | `http://localhost:3000,...` | CORS 白名单，逗号分隔 |
-| `RATE_LIMIT_MAX` | `30` | 速率限制最大请求数 |
-| `RATE_LIMIT_WINDOW` | `10000` | 速率限制窗口（毫秒） |
-| `TRUST_PROXY` | `false` | 启用 `X-Forwarded-For` 限流 IP |
+1. 下载[微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
+2. 导入项目 → 选择 `miniprogram/` 目录
+3. 填入 AppID（测试用 `touristappid`）
+4. 模拟器运行 → 点"预览"手机扫码
 
 ## 技术栈
 
-- 后端：Node.js 原生 `http` 模块，零依赖
-- 前端：原生 HTML/CSS/JS，无框架
-- 数据：JSON 文件存储
-- 测试：Node 原生 `node:test`
-
-## API
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| `GET` | `/api/breeds` | 品种列表（20 猫 + 20 狗） |
-| `POST` | `/api/recommend` | 提交宠物信息，返回推荐结果 |
-
-输入示例：
-```json
-{
-  "species": "cat",
-  "breedId": "british_shorthair",
-  "ageMonths": 36,
-  "weightKg": 5.0,
-  "diseases": ["kidney"],
-  "allergies": ["鸡肉"],
-  "foodType": ["dry", "grain_free"],
-  "budgetLevel": "medium",
-  "preferredGoal": "减重"
-}
-```
+- 小程序：原生 WXML/WXSS/JS，零依赖
+- 推荐引擎：纯 JS 逻辑，可 Node 可小程序
+- 数据：JSON 文件 + 双环境导出
+- 测试：Node `node:test`，118 项
 
 ## 数据规模
 
-- 🐱 40 款猫粮（含皇家/冠能中国版 + 10 款国产新锐品牌）
-- 🐶 30 款狗粮
-- 🐈 20 种猫品种（英短/美短/布偶/缅因/豹猫...）
-- 🐕 20 种犬品种（金毛/拉布拉多/柴犬/法斗...）
-- 🏥 8 种疾病规则（肾病/胰腺炎/过敏/糖尿病...）
-- 💰 每款含淘宝/天猫实际 RMB 参考价格
+- 79 款宠粮（39 犬 + 40 猫）
+- 20 猫 + 20 犬品种
+- 8 疾病规则 + 老年猫/犬专项规则
+- 全部含 RMB 参考价格 + 灰分
 
-## 推荐逻辑
+## 测试
 
-六维度评分 + 硬排除机制：
+```bash
+npm test  # 118 项全部通过
+```
 
-| 维度 | 权重 | 说明 |
-|------|------|------|
-| 健康安全 | 40 分 | 疾病营养限制匹配 |
-| 阶段适配 | 15 分 | 幼/成/老阶段匹配 |
-| 品种适配 | 15 分 | 品种易胖/关节/美毛等需求 |
-| 营养均衡 | 15 分 | 蛋白脂肪纤维比例 |
-| 偏好符合 | 10 分 | 预算/品类/护理目标 |
-| 数据可信 | 5 分 | 数据来源可靠性 |
+## 季度粮库更新
+
+```
+攒批季度数据 → 改 data/*.json → npm test 绿
+→ 开发者工具"上传" → 微信后台审核 (1-7 天) → 全量发布
+（约 4 次/年，审核期总计 4-28 天/年）
+```
+
+## 未来路线图
+
+- v1.x：喂食日记 + 疫苗日记（schema 已预留）
+- v2：健康观察回流影响推荐算法
+- 跨设备同步：日记数据云端存储
+
+## 小程序目录结构
+
+```
+miniprogram/
+├── app.js/json/wxss
+├── project.config.json
+├── data/          ← foods/breeds/rules JSON
+├── pages/index/   ← 首页（推荐/喂食/疫苗 3 tab）
+└── utils/
+    ├── recommendation.js  ← 纯 JS 推荐引擎
+    ├── pet-profile.js     ← 多宠物档案
+    ├── storage.js         ← wxStorage 适配器
+    └── index.js           ← 统一 re-export
+```
 
 ## 免责声明
 
-本工具仅供日常选粮参考，处方粮使用请咨询执业兽医。
+本工具仅供日常选粮参考，处方粮使用请咨询执业兽医。疫苗日期按设备本地时区，跨时区可能差 1 天。
 
 ## License
 

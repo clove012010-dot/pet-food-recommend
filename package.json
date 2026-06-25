@@ -4,8 +4,8 @@
   "description": "宠物粮智能推荐引擎 - 支持猫狗品种、疾病、预算等多维度匹配",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
+    "start": "echo 请改用微信开发者工具打开 miniprogram/ 目录",
+    "dev": "echo 请改用微信开发者工具打开 miniprogram/ 目录",
     "test": "node --test tests/*.test.js"
   },
   "keywords": ["pet", "food", "recommendation", "cat", "dog"],
