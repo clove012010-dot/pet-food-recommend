@@ -1,0 +1,127 @@
+
+> pet-food-recommend@2.0.0 test
+> node --test tests/*.test.js
+
+▶ validateProfile
+  ✔ should reject empty name (0.5244ms)
+  ✔ should reject invalid species (0.0942ms)
+  ✔ should reject empty breedId (0.0714ms)
+  ✔ should reject age out of range (0.0571ms)
+  ✔ should reject weight out of range (0.0828ms)
+  ✔ should reject BCS out of range (0.0709ms)
+  ✔ should accept valid profile (0.0445ms)
+✔ validateProfile (1.666ms)
+▶ normalizeProfile
+  ✔ should normalize neutered true/false/unknown (0.1748ms)
+  ✔ should normalize null targetWeightKg (0.0733ms)
+  ✔ should preserve foodType array (0.5798ms)
+  ✔ should default foodType to dry if not array (0.1174ms)
+  ✔ should default arrays for allergies and diseases (0.0482ms)
+✔ normalizeProfile (1.1466ms)
+▶ profileFromFormData ↔ formValuesFromProfile roundtrip
+  ✔ should roundtrip neutered three states (0.142ms)
+  ✔ should roundtrip targetWeightKg null (0.0758ms)
+  ✔ should preserve array order (0.8362ms)
+  ✔ should handle empty arrays (0.078ms)
+✔ profileFromFormData ↔ formValuesFromProfile roundtrip (1.2057ms)
+▶ ProfileStore CRUD
+  ✔ should create profile with id and timestamps (0.6785ms)
+  ✔ should return null for unknown id (0.0548ms)
+  ✔ should update and bump updatedAt (14.5267ms)
+  ✔ should delete and reassign active (0.2598ms)
+  ✔ should clear active when last profile deleted (0.1109ms)
+  ✔ should duplicate with (副本) suffix (0.1878ms)
+  ✔ should survive JSON storage roundtrip (0.0675ms)
+  ✔ should return empty array for corrupted JSON (0.0615ms)
+  ✔ should getActive return first if active not set (0.0514ms)
+  ✔ should return null from update on nonexistent id (0.0281ms)
+  ✔ should return false from delete on nonexistent id (0.0261ms)
+  ✔ should return null from duplicate on nonexistent id (0.0221ms)
+✔ ProfileStore CRUD (16.2846ms)
+▶ mergeRestrictions
+  ✔ should merge max restrictions by taking the smaller value (0.7223ms)
+  ✔ should merge min restrictions by taking the larger value (0.1725ms)
+  ✔ should track sources for each restriction (0.5694ms)
+  ✔ should collect tips and ingredients (0.1909ms)
+✔ mergeRestrictions (2.3151ms)
+▶ validateInput
+  ✔ should accept valid input (0.3215ms)
+  ✔ should reject invalid species (0.0916ms)
+  ✔ should reject empty breedId (0.0857ms)
+  ✔ should reject out-of-range ageMonths (0.0911ms)
+  ✔ should reject invalid bodyConditionScore (0.0822ms)
+  ✔ should reject unknown disease ids (0.7435ms)
+  ✔ should accept known disease id (0.0788ms)
+✔ validateInput (1.7447ms)
+▶ calcEnergy
+  ✔ should calculate RER correctly (0.1157ms)
+  ✔ should apply neutered factor (0.0638ms)
+  ✔ should apply activity factor (0.034ms)
+  ✔ should apply body condition factor for overweight (0.0532ms)
+✔ calcEnergy (0.3492ms)
+▶ Static file security
+  ✔ should not allow path traversal (0.0825ms)
+✔ Static file security (0.1061ms)
+▶ API server
+  ✔ should return 400 for invalid input (13.5926ms)
+  ✔ should return breeds list (2.2868ms)
+  ✔ should return recommendations with score breakdown (3.4954ms)
+  ✔ should exclude high-phosphorus foods for kidney disease (1.5113ms)
+  ✔ should exclude high-fat foods for pancreatitis (1.0013ms)
+  ✔ should exclude high-sodium foods for heart disease (0.8698ms)
+  ✔ should exclude foods with allergic ingredients (0.8634ms)
+  ✔ should return excludedFoods (0.8918ms)
+  ✔ should exclude high-fat foods for obesity (fat <= 14) (0.9486ms)
+  ✔ should apply senior dog hard limits (fat <= 14, phosphorus <= 1.0) (1.4239ms)
+  ✔ should return stable sorted results with tie-breaking (0.8132ms)
+  ✔ should apply senior cat nutrition rules (phosphorus <= 0.9, sodium <= 0.3) (0.8553ms)
+  ✔ should return >= 3 kitten recommendations for 4-month-old kitten (0.7106ms)
+  ✔ should recommend senior small breed dog foods (1.197ms)
+  ✔ should reject path traversal in static files (0.8565ms)
+✔ API server (42.0918ms)
+▶ calcHealthSafety
+  ✔ should return 40 when no restrictions (0.6047ms)
+  ✔ should cap at 25 when warnings exist (0.1286ms)
+  ✔ should penalize excess protein (0.0756ms)
+  ✔ should penalize excess fat (0.0714ms)
+  ✔ should penalize multiple protein sources for allergy restriction (0.0824ms)
+✔ calcHealthSafety (1.5097ms)
+▶ calcLifeStageFit
+  ✔ should return 15 for all life stage (0.088ms)
+  ✔ should return 15 for exact match (0.059ms)
+  ✔ should return 12 for adult<->senior interchange (0.0679ms)
+  ✔ should return 0 for puppy feed given adult dog (0.0619ms)
+✔ calcLifeStageFit (0.4373ms)
+▶ calcBreedFit
+  ✔ should boost score when food matches breed prefer tag (0.3694ms)
+  ✔ should penalize when food hits avoid tag (0.0944ms)
+  ✔ should return default 10 when no breed info (0.5362ms)
+✔ calcBreedFit (1.0983ms)
+▶ calcNutritionFit
+  ✔ should boost for high protein when highProteinNeed (0.1177ms)
+  ✔ should boost for balanced fat (12-20%) (0.0468ms)
+  ✔ should warn for fat > 25% (0.0422ms)
+  ✔ should warn for fat < 8% (0.0431ms)
+✔ calcNutritionFit (0.3063ms)
+▶ calcPreferenceFit
+  ✔ should score budget match (0.0579ms)
+  ✔ should score preferred goal match (0.0388ms)
+  ✔ should score preferred protein match (0.0446ms)
+✔ calcPreferenceFit (0.1819ms)
+▶ calcDataConfidence
+  ✔ should return 5 for verified source tags (0.0377ms)
+  ✔ should return 5 for 国产 tag (0.0205ms)
+  ✔ should return 3 for no verified tag (0.0208ms)
+✔ calcDataConfidence (0.1123ms)
+▶ carb estimation with ash
+  ✔ should use real ash when available for carb calculation (0.0618ms)
+  ✔ should warn ash missing when carb_max evaluated and ash not present (0.0445ms)
+✔ carb estimation with ash (0.1329ms)
+ℹ tests 83
+ℹ suites 16
+ℹ pass 83
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103.3897

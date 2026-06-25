@@ -90,6 +90,13 @@ header p { color: #a08060; font-size: 14px; }
 .tab-btn.active { background: #fff; color: #8B5E3C; border-bottom-color: #8B5E3C; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
+/* Diary */
+.feed-input { width:100%; padding:6px 10px; border:2px solid #e8d5c4; border-radius:8px; font-size:13px; background:#fdfaf7; }
+.alert-card { padding:10px 14px; border-radius:8px; margin-bottom:8px; font-size:13px; cursor:pointer; }
+.alert-card.warning { background:#fff8e1; border:1px solid #ffe082; }
+.alert-card.danger { background:#fde8e8; border:1px solid #f5c6c6; }
+.diary-row { display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #f0e6d8; font-size:12px; }
+.diary-row .actions button { padding:3px 8px; font-size:11px; border:1px solid #e8d5c4; border-radius:6px; background:#fff; cursor:pointer; }
 @media (max-width: 600px) {
   .tab-bar { overflow-x: auto; }
 }
@@ -239,8 +246,48 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
   <div id="results"></div>
   </div>
 
-  <div class="tab-panel" data-panel="feeding"></div>
-  <div class="tab-panel" data-panel="vaccination"></div>
+  <div class="tab-panel" data-panel="feeding">
+    <div class="card">
+      <h2>🍽 喂食日记</h2>
+      <div id="feedingActiveHint" style="font-size:13px;color:#a08060;margin-bottom:12px"></div>
+      <div class="form-row">
+        <div class="form-group"><label>日期</label><input type="date" id="feedDate" class="feed-input"></div>
+        <div class="form-group"><label>粮名</label><select id="feedFoodSelect" class="feed-input"><option value="">请选择</option></select></div>
+        <div class="form-group"><label>克数</label><input type="number" id="feedGrams" class="feed-input" min="1" placeholder="g"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>便便 (1-5)</label><select id="feedStool" class="feed-input"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-group"><label>泪痕 (1-5)</label><select id="feedTear" class="feed-input"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-group"><label>皮肤 (1-5)</label><select id="feedSkin" class="feed-input"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2"><label>备注</label><input type="text" id="feedNote" class="feed-input" placeholder="可选"></div>
+      </div>
+      <button class="btn" onclick="submitFeedingLog()" style="width:auto;padding:10px 24px">📝 记录</button>
+      <div id="feedingList" style="margin-top:16px;font-size:13px"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="vaccination">
+    <div class="card">
+      <h2>💉 疫苗日记</h2>
+      <div id="vaxActiveHint" style="font-size:13px;color:#a08060;margin-bottom:12px"></div>
+      <div id="vaxAlerts" style="margin-bottom:12px"></div>
+      <div class="form-row">
+        <div class="form-group"><label>接种日期</label><input type="date" id="vaxDate" class="feed-input"></div>
+        <div class="form-group" style="flex:2"><label>疫苗名称</label><input type="text" id="vaxName" class="feed-input" placeholder="如：狂犬疫苗" maxlength="50" autofocus></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>下次接种</label><input type="date" id="vaxNextDue" class="feed-input"></div>
+        <div class="form-group"><label>兽医/医院</label><input type="text" id="vaxVet" class="feed-input" placeholder="可选"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2"><label>备注</label><input type="text" id="vaxNote" class="feed-input" placeholder="可选"></div>
+      </div>
+      <button class="btn" onclick="submitVaxLog()" style="width:auto;padding:10px 24px">📝 记录</button>
+      <div id="vaxList" style="margin-top:16px;font-size:13px"></div>
+    </div>
+  </div>
 
   <footer>
     <p>由 OpenCode 搭建 | 数据仅供参考，请遵医嘱</p>
@@ -248,6 +295,8 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
 </div>
 
 <script src="pet-profile.js"></script>
+<script src="feeding-log.js"></script>
+<script src="vaccination-log.js"></script>
 <script>
 let allBreeds = { cat: [], dog: [] };
 let currentSort = 'health';
@@ -297,6 +346,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 /* ===== 多宠物档案交互 ===== */
 const profileStore = new PetProfile.ProfileStore(window.localStorage);
+const feedingLogStore = new FeedingLog.FeedingLogStore(window.localStorage);
+const vaccinationLogStore = new VaccinationLog.VaccinationLogStore(window.localStorage);
 
 function getBreedName(species, breedId) {
   if (!breedId) return '(未选品种)';
@@ -725,6 +776,101 @@ function drawCharts(recommendations, phosphorusLimit) {
       '<tr><td style="padding:3px">' + f.brand + '</td><td style="text-align:center">' + f.protein + '</td><td style="text-align:center">' + f.fat + '</td><td style="text-align:center">' + f.fiber + '</td><td style="text-align:center">' + f.phosphorus + '</td><td style="text-align:center">' + f.sodium + '</td><td style="text-align:center">' + f.magnesium + '</td></tr>'));
   }
 }
+
+/* ===== 喂食/疫苗日记交互 ===== */
+function renderFeedingList() {
+  const active = profileStore.getActive();
+  const hint = document.getElementById('feedingActiveHint');
+  const list = document.getElementById('feedingList');
+  if (!active) { hint.textContent = '请先创建宠物档案'; list.innerHTML = ''; return; }
+  hint.innerHTML = '当前为 <b>' + active.name + '</b> 记录';
+  const logs = feedingLogStore.filterByPet(active.id).slice(0, 20);
+  if (logs.length === 0) { list.innerHTML = '<div style="color:#a08060;padding:12px">暂无喂食记录</div>'; return; }
+  list.innerHTML = logs.map(l => {
+    const stool = l.stoolScore ? '💩' + l.stoolScore : '';
+    const tear = l.tearStainScore ? '😢' + l.tearStainScore : '';
+    const skin = l.skinScore ? '🩺' + l.skinScore : '';
+    return '<div class="diary-row"><div>' + l.date + ' ' + (l.foodName || l.foodId) + ' ' + l.grams + 'g ' + stool + tear + skin + ' ' + (l.note||'') + '</div><div class="actions"><button onclick="deleteFeedingLog(\'' + l.id + '\')">删除</button></div></div>';
+  }).join('');
+}
+
+function submitFeedingLog() {
+  const active = profileStore.getActive();
+  if (!active) { alert('请先创建宠物档案'); return; }
+  const fd = {
+    date: document.getElementById('feedDate').value,
+    foodId: document.getElementById('feedFoodSelect').value,
+    foodName: document.getElementById('feedFoodSelect').selectedOptions[0]?.textContent || '',
+    grams: document.getElementById('feedGrams').value,
+    stoolScore: document.getElementById('feedStool').value,
+    tearStainScore: document.getElementById('feedTear').value,
+    skinScore: document.getElementById('feedSkin').value,
+    note: document.getElementById('feedNote').value
+  };
+  const log = FeedingLog.feedingLogFromFormData(fd, active.id);
+  const v = FeedingLog.validateFeedingLog(log);
+  if (!v.valid) { alert(v.errors.join('\n')); return; }
+  feedingLogStore.create(log);
+  renderFeedingList();
+}
+
+function deleteFeedingLog(id) { if (confirm('删除这条记录？')) { feedingLogStore.delete(id); renderFeedingList(); } }
+
+function renderVaxUI() {
+  const active = profileStore.getActive();
+  const hint = document.getElementById('vaxActiveHint');
+  const alerts = document.getElementById('vaxAlerts');
+  const list = document.getElementById('vaxList');
+  if (!active) { hint.textContent = '请先创建宠物档案'; alerts.innerHTML = ''; list.innerHTML = ''; return; }
+  hint.innerHTML = '当前为 <b>' + active.name + '</b> 记录';
+
+  const upcoming = vaccinationLogStore.filterUpcoming(active.id);
+  const overdue = vaccinationLogStore.filterOverdue(active.id);
+  let html = '';
+  overdue.forEach(l => { const d = VaccinationLog.getDaysUntil(l.nextDueDate); html += '<div class="alert-card danger">🔴 ' + l.vaccineName + ' 已过期 ' + Math.abs(d) + ' 天</div>'; });
+  upcoming.forEach(l => { const d = VaccinationLog.getDaysUntil(l.nextDueDate); if (d <= 7) html += '<div class="alert-card warning">⚠ ' + l.vaccineName + ' 还有 ' + d + ' 天到期</div>'; });
+  if (!html) html = '<div style="color:#a08060;padding:8px">🎉 近期没有待办疫苗</div>';
+  alerts.innerHTML = html;
+
+  const all = vaccinationLogStore.filterByPet(active.id).slice(0, 20);
+  if (all.length === 0) { list.innerHTML = '<div style="color:#a08060;padding:12px">暂无疫苗记录</div>'; return; }
+  list.innerHTML = all.map(l => {
+    const days = VaccinationLog.getDaysUntil(l.nextDueDate);
+    let badge = '';
+    if (days !== null) { if (days < 0) badge = '<span style="color:#c44">过期' + Math.abs(days) + '天</span>'; else if (days <= 7) badge = '<span style="color:#e8a838">' + days + '天</span>'; else badge = '<span style="color:#4a8">' + days + '天</span>'; }
+    return '<div class="diary-row"><div>' + l.date + ' ' + l.vaccineName + ' ' + (l.nextDueDate||'') + ' ' + badge + ' ' + (l.vet||'') + '</div><div class="actions"><button onclick="deleteVaxLog(\'' + l.id + '\')">删除</button></div></div>';
+  }).join('');
+}
+
+function submitVaxLog() {
+  const active = profileStore.getActive();
+  if (!active) { alert('请先创建宠物档案'); return; }
+  const log = VaccinationLog.vaccinationLogFromFormData({
+    date: document.getElementById('vaxDate').value,
+    vaccineName: document.getElementById('vaxName').value,
+    nextDueDate: document.getElementById('vaxNextDue').value || null,
+    vet: document.getElementById('vaxVet').value,
+    note: document.getElementById('vaxNote').value
+  }, active.id);
+  const v = VaccinationLog.validateVaccinationLog(log);
+  if (!v.valid) { alert(v.errors.join('\n')); return; }
+  vaccinationLogStore.create(log);
+  renderVaxUI();
+}
+
+function deleteVaxLog(id) { if (confirm('删除这条记录？')) { vaccinationLogStore.delete(id); renderVaxUI(); } }
+
+// 品种切换刷新日记
+const _origRenderProfileBar = renderProfileBar;
+renderProfileBar = function() { _origRenderProfileBar(); renderFeedingList(); renderVaxUI(); };
+
+// Tab 切换
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (this.dataset.tab === 'feeding') renderFeedingList();
+    if (this.dataset.tab === 'vaccination') renderVaxUI();
+  });
+});
 </script>
 </body>
 </html>
