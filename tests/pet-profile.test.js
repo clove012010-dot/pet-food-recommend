@@ -198,3 +198,35 @@ describe('ProfileStore CRUD', () => {
     assert.strictEqual(ps.duplicate('nope'), null);
   });
 });
+
+/* ===== pet-records schema ===== */
+const { FeedingLogSchema, VaccinationLogSchema, createFeedingLog, createVaccinationLog } = require('../public/pet-profile');
+
+describe('pet-records schema', () => {
+  it('should createFeedingLog with id + timestamps and not mutate input', () => {
+    const input = { petId: 'p1', date: '2026-01-01', foodId: '33', foodName: '渴望', grams: 80 };
+    const log = createFeedingLog(input);
+    assert.ok(log.id.startsWith('feed_'));
+    assert.ok(log.createdAt);
+    assert.strictEqual(log.petId, 'p1');
+    assert.strictEqual(typeof input.id, 'undefined');
+  });
+
+  it('should createVaccinationLog with id + timestamps', () => {
+    const log = createVaccinationLog({ petId: 'p1', date: '2026-01-01', vaccineName: '狂犬' });
+    assert.ok(log.id.startsWith('vax_'));
+    assert.ok(log.createdAt);
+  });
+
+  it('should have distinct id prefixes for different record types', () => {
+    const feedLog = createFeedingLog({ petId: 'p1', date: '2026-01-01', foodId: '33' });
+    const vaxLog = createVaccinationLog({ petId: 'p1', date: '2026-01-01', vaccineName: '狂犬' });
+    assert.ok(feedLog.id.startsWith('feed_'));
+    assert.ok(vaxLog.id.startsWith('vax_'));
+  });
+
+  it('should return null when required fields missing', () => {
+    assert.strictEqual(createFeedingLog({ petId: 'p1' }), null);
+    assert.strictEqual(createVaccinationLog({ petId: 'p1', date: '2026-01-01' }), null);
+  });
+});

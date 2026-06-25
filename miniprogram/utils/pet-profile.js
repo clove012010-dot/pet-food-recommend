@@ -208,27 +208,69 @@ class ProfileStore {
     const p = normalizeProfile(profile);
     const neutered = p.neutered === 'true' ? true : (p.neutered === 'false' ? false : 'unknown');
     return {
-      name: p.name,
-      species: p.species,
-      breedId: p.breedId,
-      ageMonths: p.ageMonths,
-      weightKg: p.weightKg,
-      sex: p.sex,
-      neutered,
-      bodyConditionScore: p.bodyConditionScore,
-      activityLevel: p.activityLevel,
-      targetWeightKg: p.targetWeightKg || null,
-      budgetLevel: p.budgetLevel,
-      foodType: p.foodType,
-      preferredGoal: p.preferredGoal,
-      allergies: p.allergies,
-      diseases: p.diseases,
+      name: p.name, species: p.species, breedId: p.breedId,
+      ageMonths: p.ageMonths, weightKg: p.weightKg,
+      sex: p.sex, neutered, bodyConditionScore: p.bodyConditionScore,
+      activityLevel: p.activityLevel, targetWeightKg: p.targetWeightKg || null,
+      budgetLevel: p.budgetLevel, foodType: p.foodType,
+      preferredGoal: p.preferredGoal, allergies: p.allergies, diseases: p.diseases,
     };
   }
 }
 
+/* ===== pet-records schema (v1.x 喂食/疫苗日记预留) ===== */
+const FeedingLogSchema = [
+  { name: 'id', type: 'string', required: true },
+  { name: 'petId', type: 'string', required: true },
+  { name: 'date', type: 'string', required: true },
+  { name: 'foodId', type: 'string', required: true },
+  { name: 'foodName', type: 'string', required: false },
+  { name: 'grams', type: 'number', required: true },
+  { name: 'stoolScore', type: 'number', required: false },
+  { name: 'tearStainScore', type: 'number', required: false },
+  { name: 'skinScore', type: 'number', required: false },
+  { name: 'note', type: 'string', required: false },
+  { name: 'createdAt', type: 'string', required: false }
+];
+
+const VaccinationLogSchema = [
+  { name: 'id', type: 'string', required: true },
+  { name: 'petId', type: 'string', required: true },
+  { name: 'date', type: 'string', required: true },
+  { name: 'vaccineName', type: 'string', required: true },
+  { name: 'nextDueDate', type: 'string', required: false },
+  { name: 'vet', type: 'string', required: false },
+  { name: 'note', type: 'string', required: false },
+  { name: 'createdAt', type: 'string', required: false }
+];
+
+function generateRecordId(prefix) {
+  return (prefix || 'rec') + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
+}
+
+function createFeedingLog(input) {
+  if (!input || !input.petId || !input.date || !input.foodId) return null;
+  return {
+    id: generateRecordId('feed'), petId: input.petId, date: input.date,
+    foodId: input.foodId, foodName: input.foodName || '', grams: input.grams || 0,
+    stoolScore: input.stoolScore != null ? parseInt(input.stoolScore, 10) : null,
+    tearStainScore: input.tearStainScore != null ? parseInt(input.tearStainScore, 10) : null,
+    skinScore: input.skinScore != null ? parseInt(input.skinScore, 10) : null,
+    note: input.note || '', createdAt: new Date().toISOString()
+  };
+}
+
+function createVaccinationLog(input) {
+  if (!input || !input.petId || !input.date || !input.vaccineName) return null;
+  return {
+    id: generateRecordId('vax'), petId: input.petId, date: input.date,
+    vaccineName: input.vaccineName, nextDueDate: input.nextDueDate || null,
+    vet: input.vet || '', note: input.note || '', createdAt: new Date().toISOString()
+  };
+}
+
 /* ===== 双环境导出 ===== */
-const api = { DEFAULT_PROFILE, generateId, normalizeProfile, validateProfile, ProfileStore };
+const api = { DEFAULT_PROFILE, generateId, normalizeProfile, validateProfile, ProfileStore, FeedingLogSchema, VaccinationLogSchema, createFeedingLog, createVaccinationLog };
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = api;
