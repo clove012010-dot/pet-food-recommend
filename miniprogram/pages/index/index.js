@@ -1,4 +1,4 @@
-const { PetProfile, wxStorage } = require('../../utils/index.js');
+const { PetProfile, wxStorage, FeedingLog, VaccinationLog } = require('../../utils/index.js');
 const { recommend, validateInput } = require('../../utils/recommendation.js');
 const { loadBreeds } = require('../../utils/breeds-data');
 
@@ -20,10 +20,15 @@ Page({
     sexIdx: 1, nuteredIdx: 1, bcsIdx: 4, activityIdx: 1, budgetIdx: 0, goalIdx: 0,
     formData: { species: 'cat', breedId: '', ageMonths: 12, weightKg: 5, sex: 'male', neutered: 'unknown', bodyConditionScore: 5, activityLevel: 'normal', budgetLevel: 'any', preferredGoal: '', foodType: ['干粮'], allergies: [], diseases: [] },
     showResults: false, recommendations: [],
+    feedDate: '', feedFoodName: '', feedGrams: '', feedStool: '', feedTear: '', feedSkin: '', feedNote: '', feedHint: '', feedList: [],
+    vaxDate: '', vaxName: '', vaxNextDue: '', vaxVet: '', vaxNote: '', vaxHint: '', vaxAlerts: [], vaxList: [],
+    scoreOptions: ['-','1','2','3','4','5'],
   },
 
   onLoad() {
     this.profileStore = new PetProfile.ProfileStore(wxStorage);
+    this.feedingLogStore = new FeedingLog.FeedingLogStore(wxStorage);
+    this.vaccinationLogStore = new VaccinationLog.VaccinationLogStore(wxStorage);
     this.initBreeds();
     this.initProfileBar();
   },
@@ -60,7 +65,12 @@ Page({
     })});
   },
 
-  onSwitchTab(e) { this.setData({ currentTab: e.currentTarget.dataset.tab }); },
+  onSwitchTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    this.setData({ currentTab: tab });
+    if (tab === 'feeding') this.renderFeeding();
+    if (tab === 'vaccination') this.renderVax();
+  },
 
   onSubmit() {
     const fd = this.data.formData;
@@ -154,5 +164,71 @@ Page({
     if (!name.trim()) return;
     const active = this.profileStore.getActive();
     if (active) this.profileStore.update(active.id, { name: name.trim() });
+  },
+
+  /* ===== 喂食日记 ===== */
+  onSubmitFeed() {
+    const active = this.profileStore.getActive();
+    if (!active) { wx.showToast({ title: '请先创建档案', icon: 'none' }); return; }
+    const log = FeedingLog.feedingLogFromFormData({
+      date: this.data.feedDate, foodId: this.data.feedFoodId, foodName: this.data.feedFoodName,
+      grams: this.data.feedGrams, stoolScore: this.data.feedStool, tearStainScore: this.data.feedTear,
+      skinScore: this.data.feedSkin, note: this.data.feedNote
+    }, active.id);
+    const v = FeedingLog.validateFeedingLog(log);
+    if (!v.valid) { wx.showToast({ title: v.errors[0], icon: 'none' }); return; }
+    this.feedingLogStore.create(log);
+    this.renderFeeding();
+    wx.showToast({ title: '已记录', icon: 'success' });
+  },
+
+  onDeleteFeed(e) {
+    const id = e.currentTarget.dataset.id;
+    const that = this;
+    wx.showModal({ title: '删除', content: '删除这条记录？', success(res) { if (res.confirm) { that.feedingLogStore.delete(id); that.renderFeeding(); } } });
+  },
+
+  renderFeeding() {
+    const active = this.profileStore.getActive();
+    if (!active) { this.setData({ feedHint: '请先创建宠物档案', feedList: [] }); return; }
+    const logs = this.feedingLogStore.filterByPet(active.id).slice(0, 20);
+    this.setData({ feedHint: '当前为 ' + active.name + ' 记录', feedList: logs });
+  },
+
+  /* ===== 疫苗日记 ===== */
+  onSubmitVax() {
+    const active = this.profileStore.getActive();
+    if (!active) { wx.showToast({ title: '请先创建档案', icon: 'none' }); return; }
+    const log = VaccinationLog.vaccinationLogFromFormData({
+      date: this.data.vaxDate, vaccineName: this.data.vaxName,
+      nextDueDate: this.data.vaxNextDue || null, vet: this.data.vaxVet, note: this.data.vaxNote
+    }, active.id);
+    const v = VaccinationLog.validateVaccinationLog(log);
+    if (!v.valid) { wx.showToast({ title: v.errors[0], icon: 'none' }); return; }
+    this.vaccinationLogStore.create(log);
+    this.renderVax();
+    wx.showToast({ title: '已记录', icon: 'success' });
+  },
+
+  onDeleteVax(e) {
+    const id = e.currentTarget.dataset.id;
+    const that = this;
+    wx.showModal({ title: '删除', content: '删除这条记录？', success(res) { if (res.confirm) { that.vaccinationLogStore.delete(id); that.renderVax(); } } });
+  },
+
+  renderVax() {
+    const active = this.profileStore.getActive();
+    if (!active) { this.setData({ vaxHint: '请先创建宠物档案', vaxAlerts: [], vaxList: [] }); return; }
+    const upcoming = this.vaccinationLogStore.filterUpcoming(active.id);
+    const overdue = this.vaccinationLogStore.filterOverdue(active.id);
+    const alerts = [];
+    overdue.forEach(l => { const d = VaccinationLog.getDaysUntil(l.nextDueDate); alerts.push({ type:'danger', text: l.vaccineName + ' 已过期 ' + Math.abs(d) + ' 天' }); });
+    upcoming.forEach(l => { const d = VaccinationLog.getDaysUntil(l.nextDueDate); if (d <= 7) alerts.push({ type:'warning', text: l.vaccineName + ' 还有 ' + d + ' 天到期' }); });
+    const all = this.vaccinationLogStore.filterByPet(active.id).slice(0, 20);
+    this.setData({ vaxHint: '当前为 ' + active.name + ' 记录', vaxAlerts: alerts, vaxList: all.map(l => {
+      const days = VaccinationLog.getDaysUntil(l.nextDueDate);
+      let badge = ''; if (days !== null) { if (days < 0) badge = '过期' + Math.abs(days) + '天'; else if (days <= 7) badge = days + '天'; else badge = days + '天'; }
+      return { ...l, daysBadge: badge };
+    })});
   },
 });

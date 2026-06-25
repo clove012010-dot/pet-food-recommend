@@ -32,3 +32,7 @@
 .n-val { font-size: 15px; font-weight: 700; color: var(--primary); display: block; }
 .n-label { font-size: 11px; color: var(--text-light); }
 .feed-guide { font-size: 13px; color: var(--success); display: block; margin-top: 6px; }
+.diary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--bg); font-size: 12px; }
+.alert-card { padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+.alert-warning { background: #fff8e1; border: 1px solid #ffe082; }
+.alert-danger { background: #fde8e8; border: 1px solid #f5c6c6; }

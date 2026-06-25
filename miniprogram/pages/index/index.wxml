@@ -98,10 +98,48 @@
 
 <!-- 喂食面板 -->
 <view wx:if="{{currentTab==='feeding'}}" class="tab-panel">
-  <view class="card"><text class="h2">🍽 喂食日记</text><text>需小程序版 pet-profile 接入，v1 预留</text></view>
+  <view class="card">
+    <text class="h2">🍽 喂食日记</text>
+    <text style="font-size:13px;color:var(--text-light);margin-bottom:12px">{{feedHint}}</text>
+    <view class="form-row">
+      <view class="form-group"><text class="label">日期</text><picker mode="date" bindchange="onFeedDate" value="{{feedDate}}"><view class="picker">{{feedDate || '选择日期'}}</view></picker></view>
+      <view class="form-group"><text class="label">粮名</text><input value="{{feedFoodName}}" bindinput="onInput" data-field="feedFoodName" placeholder="如：渴望"/></view>
+      <view class="form-group"><text class="label">克数</text><input value="{{feedGrams}}" bindinput="onInput" data-field="feedGrams" type="number" placeholder="g"/></view>
+    </view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">便便 1-5</text><picker bindchange="onFeedStool" value="{{feedStool}}" range="{{scoreOptions}}"><view class="picker">{{feedStool||'-'}}</view></picker></view>
+      <view class="form-group"><text class="label">泪痕 1-5</text><picker bindchange="onFeedTear" value="{{feedTear}}" range="{{scoreOptions}}"><view class="picker">{{feedTear||'-'}}</view></picker></view>
+      <view class="form-group"><text class="label">皮肤 1-5</text><picker bindchange="onFeedSkin" value="{{feedSkin}}" range="{{scoreOptions}}"><view class="picker">{{feedSkin||'-'}}</view></picker></view>
+    </view>
+    <button class="btn-sm" bindtap="onSubmitFeed">📝 记录</button>
+    <view wx:for="{{feedList}}" wx:key="id" class="diary-row">
+      <text>{{item.date}} {{item.foodName}} {{item.grams}}g</text>
+      <button class="btn-sm btn-danger" bindtap="onDeleteFeed" data-id="{{item.id}}" size="mini">删除</button>
+    </view>
+  </view>
 </view>
 
 <!-- 疫苗面板 -->
 <view wx:if="{{currentTab==='vaccination'}}" class="tab-panel">
-  <view class="card"><text class="h2">💉 疫苗日记</text><text>需小程序版 pet-profile 接入，v1 预留</text></view>
+  <view class="card">
+    <text class="h2">💉 疫苗日记</text>
+    <text style="font-size:13px;color:var(--text-light);margin-bottom:12px">{{vaxHint}}</text>
+    <view wx:for="{{vaxAlerts}}" wx:key="text" class="alert-card {{item.type==='danger'?'alert-danger':'alert-warning'}}">
+      <text>{{item.type==='danger'?'🔴':'⚠'}} {{item.text}}</text>
+    </view>
+    <view wx:if="{{vaxAlerts.length===0}}" style="color:var(--text-light);padding:8px">🎉 近期没有待办疫苗</view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">接种日期</text><picker mode="date" bindchange="onVaxDate" value="{{vaxDate}}"><view class="picker">{{vaxDate||'选择日期'}}</view></picker></view>
+      <view class="form-group"><text class="label">疫苗名称</text><input value="{{vaxName}}" bindinput="onInput" data-field="vaxName" placeholder="如：狂犬" maxlength="50"/></view>
+    </view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">下次接种</text><picker mode="date" bindchange="onVaxNext" value="{{vaxNextDue}}"><view class="picker">{{vaxNextDue||'留空=一次性'}}</view></picker></view>
+      <view class="form-group"><text class="label">兽医</text><input value="{{vaxVet}}" bindinput="onInput" data-field="vaxVet" placeholder="可选"/></view>
+    </view>
+    <button class="btn-sm" bindtap="onSubmitVax">📝 记录</button>
+    <view wx:for="{{vaxList}}" wx:key="id" class="diary-row">
+      <text>{{item.date}} {{item.vaccineName}} {{item.daysBadge}} {{item.vet}}</text>
+      <button class="btn-sm btn-danger" bindtap="onDeleteVax" data-id="{{item.id}}" size="mini">删除</button>
+    </view>
+  </view>
 </view>
