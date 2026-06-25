@@ -285,6 +285,11 @@ function validateInput(input) {
     if (!['low', 'normal', 'high'].includes(activityLevel)) errors.push('activityLevel must be low/normal/high');
   }
   if (diseases !== undefined && diseases !== null && !Array.isArray(diseases)) errors.push('diseases must be an array');
+  if (Array.isArray(diseases) && diseases.length > 0) {
+    const validIds = new Set(getAllRules().map(r => r.id));
+    const invalid = diseases.filter(d => !validIds.has(d));
+    if (invalid.length) errors.push(`Unknown disease id: ${invalid.join(',')}`);
+  }
   if (allergies !== undefined && allergies !== null && !Array.isArray(allergies)) errors.push('allergies must be an array');
   if (avoidIngredients !== undefined && avoidIngredients !== null && !Array.isArray(avoidIngredients)) errors.push('avoidIngredients must be an array');
   if (preferredProteins !== undefined && preferredProteins !== null && !Array.isArray(preferredProteins)) errors.push('preferredProteins must be an array');
@@ -398,9 +403,30 @@ function recommend(input) {
   const hasPancreatitis = diseaseIds.includes('pancreatitis');
   const hasKidney = diseaseIds.includes('kidney');
   const hasHeart = diseaseIds.includes('heart');
-  const hardExcludeFat = hasPancreatitis ? restrictions.fat_max : null;
-  const hardExcludePhosphorus = hasKidney ? restrictions.phosphorus_max : null;
-  const hardExcludeSodium = hasHeart ? restrictions.sodium_max : null;
+  const hasObesity = diseaseIds.includes('obesity');
+
+  let hardExcludeFat = null;
+  if (hasPancreatitis) hardExcludeFat = restrictions.fat_max;
+  if (hasObesity && restrictions.fat_max !== undefined) hardExcludeFat = hardExcludeFat !== null ? Math.min(hardExcludeFat, restrictions.fat_max) : restrictions.fat_max;
+
+  let hardExcludePhosphorus = hasKidney ? restrictions.phosphorus_max : null;
+  let hardExcludeSodium = hasHeart ? restrictions.sodium_max : null;
+
+  // senior life stage rules also enforce fat/phosphorus/sodium hard limits
+  let srHardExcludeFat = null, srHardExcludePhosphorus = null, srHardExcludeSodium = null;
+  if (lifeStageRuleSources.length > 0) {
+    const stageRules = getLifeStageRules(species, lifeStage);
+    for (const sr of stageRules) {
+      if (sr.restrictions) {
+        if (sr.restrictions.fat_max !== undefined) srHardExcludeFat = srHardExcludeFat !== null ? Math.min(srHardExcludeFat, sr.restrictions.fat_max) : sr.restrictions.fat_max;
+        if (sr.restrictions.phosphorus_max !== undefined) srHardExcludePhosphorus = srHardExcludePhosphorus !== null ? Math.min(srHardExcludePhosphorus, sr.restrictions.phosphorus_max) : sr.restrictions.phosphorus_max;
+        if (sr.restrictions.sodium_max !== undefined) srHardExcludeSodium = srHardExcludeSodium !== null ? Math.min(srHardExcludeSodium, sr.restrictions.sodium_max) : sr.restrictions.sodium_max;
+      }
+    }
+  }
+  if (srHardExcludeFat !== null) hardExcludeFat = hardExcludeFat !== null ? Math.min(hardExcludeFat, srHardExcludeFat) : srHardExcludeFat;
+  if (srHardExcludePhosphorus !== null) hardExcludePhosphorus = hardExcludePhosphorus !== null ? Math.min(hardExcludePhosphorus, srHardExcludePhosphorus) : srHardExcludePhosphorus;
+  if (srHardExcludeSodium !== null) hardExcludeSodium = hardExcludeSodium !== null ? Math.min(hardExcludeSodium, srHardExcludeSodium) : srHardExcludeSodium;
 
   for (const food of allFoods) {
     if (food.species !== species) { excludedFoods.push({ food, reason: `物种不匹配（${food.species} vs ${species}）` }); continue; }

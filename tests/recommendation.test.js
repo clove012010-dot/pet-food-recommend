@@ -82,8 +82,14 @@ describe('validateInput', () => {
     assert.strictEqual(result.valid, false);
   });
 
-  it('should handle optional fields', () => {
-    const result = validateInput({ species: 'dog', breedId: 'golden_retriever', ageMonths: 36, weightKg: 30 });
+  it('should reject unknown disease ids', () => {
+    const result = validateInput({ species: 'cat', breedId: 'x', ageMonths: 12, weightKg: 5, diseases: ['kidny'] });
+    assert.strictEqual(result.valid, false);
+    assert.ok(result.errors.some(e => e.includes('Unknown disease id')));
+  });
+
+  it('should accept known disease id', () => {
+    const result = validateInput({ species: 'cat', breedId: 'x', ageMonths: 12, weightKg: 5, diseases: ['kidney'] });
     assert.strictEqual(result.valid, true);
   });
 });
@@ -226,6 +232,31 @@ describe('API server', () => {
     assert.strictEqual(result.status, 200);
     assert.ok(result.data.totalExcluded !== undefined);
     assert.ok(Array.isArray(result.data.excludedFoods));
+  });
+
+  it('should exclude high-fat foods for obesity (fat <= 14)', async () => {
+    const result = await postJSON('/api/recommend', {
+      species: 'cat', breedId: 'british_shorthair', ageMonths: 36, weightKg: 6,
+      bodyConditionScore: 8, diseases: ['obesity']
+    });
+    assert.strictEqual(result.status, 200);
+    const top3 = result.data.recommendations.slice(0, 3);
+    for (const rec of top3) {
+      assert.ok(rec.fat <= 14, `Obesity: expected fat <=14 but got ${rec.fat} for ${rec.name}`);
+    }
+  });
+
+  it('should apply senior dog hard limits (fat <= 14, phosphorus <= 1.0)', async () => {
+    const result = await postJSON('/api/recommend', {
+      species: 'dog', breedId: 'golden_retriever', ageMonths: 96, weightKg: 30,
+      bodyConditionScore: 5, diseases: []
+    });
+    assert.strictEqual(result.status, 200);
+    const top3 = result.data.recommendations.slice(0, 3);
+    for (const rec of top3) {
+      assert.ok(rec.fat <= 14, `Senior dog: expected fat <=14 but got ${rec.fat} for ${rec.name}`);
+      assert.ok(rec.phosphorus <= 1.0, `Senior dog: expected phosphorus <=1.0 but got ${rec.phosphorus} for ${rec.name}`);
+    }
   });
 
   it('should return stable sorted results with tie-breaking', async () => {
