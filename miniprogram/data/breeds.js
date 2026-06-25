@@ -1,0 +1,1962 @@
+module.exports = {
+  "breeds": {
+    "cat": [
+      {
+        "id": "british_shorthair",
+        "name": "英短",
+        "fullName": "英国短毛猫",
+        "weightMaleKg": [
+          4,
+          7.7
+        ],
+        "weightFemaleKg": [
+          3.2,
+          5.4
+        ],
+        "typicalWeightKg": 5,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          17
+        ],
+        "traits": [
+          "温顺",
+          "安静",
+          "独立",
+          "易发胖"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "英短不爱运动易发胖，需严格控制每日热量摄入，选择低脂中蛋白配方",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "高热量"
+          ],
+          "preferTags": [
+            "体重管理",
+            "室内猫",
+            "毛球控制"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "Omega-3&6 护心"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "多囊肾病(PKD)",
+            "肥胖"
+          ]
+        }
+      },
+      {
+        "id": "american_shorthair",
+        "name": "美短",
+        "fullName": "美国短毛猫",
+        "weightMaleKg": [
+          5,
+          7
+        ],
+        "weightFemaleKg": [
+          3.5,
+          5.5
+        ],
+        "typicalWeightKg": 5.5,
+        "size": "medium",
+        "lifeExpectancy": [
+          15,
+          20
+        ],
+        "traits": [
+          "活泼",
+          "聪明",
+          "亲人",
+          "肌肉发达"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "美短活泼好动肌肉发达，需要高蛋白配方维持肌肉量，适当补充关节营养",
+          "recommendCalorieFactor": 1.1,
+          "avoidTags": [],
+          "preferTags": [
+            "高蛋白",
+            "无谷"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "葡萄糖胺 关节保护"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "髋关节发育不良"
+          ]
+        }
+      },
+      {
+        "id": "ragdoll",
+        "name": "布偶",
+        "fullName": "布偶猫",
+        "weightMaleKg": [
+          6,
+          9
+        ],
+        "weightFemaleKg": [
+          4,
+          6
+        ],
+        "typicalWeightKg": 6.5,
+        "size": "large",
+        "lifeExpectancy": [
+          12,
+          17
+        ],
+        "traits": [
+          "温顺",
+          "粘人",
+          "长毛",
+          "体型大"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "布偶猫体型大但活动量中等，需适量蛋白+美毛营养，长毛需Omega-3&6护毛",
+          "recommendCalorieFactor": 1,
+          "avoidTags": [
+            "低蛋白"
+          ],
+          "preferTags": [
+            "美毛",
+            "长毛护理",
+            "品种配方"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "生物素 护毛"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "毛球症",
+            "膀胱结石"
+          ]
+        }
+      },
+      {
+        "id": "persian",
+        "name": "波斯",
+        "fullName": "波斯猫",
+        "weightMaleKg": [
+          3.5,
+          5.5
+        ],
+        "weightFemaleKg": [
+          3,
+          4.5
+        ],
+        "typicalWeightKg": 4,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          16
+        ],
+        "traits": [
+          "安静",
+          "高贵",
+          "长毛",
+          "扁平脸"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "波斯猫安静不爱动易发胖，扁脸结构需小颗粒粮方便采食，长毛需美毛护理",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "大颗粒"
+          ],
+          "preferTags": [
+            "美毛",
+            "体重管理",
+            "室内猫",
+            "颗粒小"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "多囊肾病(PKD)",
+            "呼吸道问题",
+            "毛球症"
+          ]
+        }
+      },
+      {
+        "id": "siamese",
+        "name": "暹罗",
+        "fullName": "暹罗猫",
+        "weightMaleKg": [
+          3,
+          5
+        ],
+        "weightFemaleKg": [
+          2.5,
+          4
+        ],
+        "typicalWeightKg": 3.5,
+        "size": "small",
+        "lifeExpectancy": [
+          15,
+          20
+        ],
+        "traits": [
+          "活泼",
+          "聪明",
+          "话痨",
+          "好动"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "暹罗猫活泼好动代谢快，需高蛋白中高热量配方，少量多餐",
+          "recommendCalorieFactor": 1.15,
+          "avoidTags": [],
+          "preferTags": [
+            "高蛋白",
+            "无谷"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "抗氧化剂"
+          ],
+          "healthRisks": [
+            "呼吸道问题",
+            "进行性视网膜萎缩(PRA)",
+            "消化道敏感"
+          ]
+        }
+      },
+      {
+        "id": "maine_coon",
+        "name": "缅因",
+        "fullName": "缅因猫",
+        "weightMaleKg": [
+          6.8,
+          11.3
+        ],
+        "weightFemaleKg": [
+          4.5,
+          6.8
+        ],
+        "typicalWeightKg": 8,
+        "size": "large",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "温顺",
+          "巨猫",
+          "长毛",
+          "亲人"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "缅因猫体型巨大，幼猫期（0-18月）需要高蛋白支持骨骼发育，成猫需控制体重",
+          "recommendCalorieFactor": 1,
+          "avoidTags": [
+            "低蛋白"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "关节保护",
+            "大型猫"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺 关节",
+            "牛磺酸",
+            "Omega-3 心脏"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "髋关节发育不良",
+            "脊髓性肌萎缩(SMA)"
+          ]
+        }
+      },
+      {
+        "id": "scottish_fold",
+        "name": "折耳",
+        "fullName": "苏格兰折耳猫",
+        "weightMaleKg": [
+          4,
+          6
+        ],
+        "weightFemaleKg": [
+          2.7,
+          4
+        ],
+        "typicalWeightKg": 4,
+        "size": "medium",
+        "lifeExpectancy": [
+          11,
+          15
+        ],
+        "traits": [
+          "温顺",
+          "安静",
+          "圆脸",
+          "软骨病风险"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "折耳猫有先天软骨病风险（OCD），需补充关节营养如葡萄糖胺和软骨素，控制体重减轻关节负担",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "高磷"
+          ],
+          "preferTags": [
+            "关节保护",
+            "体重管理",
+            "低敏"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素",
+            "Omega-3 抗炎"
+          ],
+          "healthRisks": [
+            "骨软骨发育不良(OCD)",
+            "肥厚性心肌病",
+            "多囊肾病"
+          ]
+        }
+      },
+      {
+        "id": "exotic_shorthair",
+        "name": "异短",
+        "fullName": "异国短毛猫（加菲猫）",
+        "weightMaleKg": [
+          4,
+          5.5
+        ],
+        "weightFemaleKg": [
+          3,
+          4.5
+        ],
+        "typicalWeightKg": 4,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "安静",
+          "温顺",
+          "扁平脸",
+          "短毛"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "加菲猫扁脸采食困难需小颗粒粮，静多动少易发胖，注意控制热量",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "大颗粒"
+          ],
+          "preferTags": [
+            "体重管理",
+            "室内猫",
+            "颗粒小"
+          ],
+          "specialNutrients": [
+            "Omega-3",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "多囊肾病(PKD)",
+            "呼吸道问题",
+            "泪痕"
+          ]
+        }
+      },
+      {
+        "id": "domestic_shorthair",
+        "name": "中华田园猫",
+        "fullName": "中华田园猫（狸花/橘猫/三花等）",
+        "weightMaleKg": [
+          3.5,
+          6
+        ],
+        "weightFemaleKg": [
+          2.5,
+          4.5
+        ],
+        "typicalWeightKg": 4.5,
+        "size": "medium",
+        "lifeExpectancy": [
+          15,
+          20
+        ],
+        "traits": [
+          "体质好",
+          "聪明",
+          "独立",
+          "适应力强"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "中华田园猫体质强健适应力好，但橘猫基因易发胖需注意，推荐均衡配方即可",
+          "recommendCalorieFactor": 1,
+          "avoidTags": [],
+          "preferTags": [
+            "天然",
+            "均衡"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "均衡维生素"
+          ],
+          "healthRisks": [
+            "橘猫易肥胖",
+            "口腔问题"
+          ]
+        }
+      },
+      {
+        "id": "sphynx",
+        "name": "无毛猫",
+        "fullName": "斯芬克斯无毛猫",
+        "weightMaleKg": [
+          3.5,
+          5.5
+        ],
+        "weightFemaleKg": [
+          2.5,
+          4
+        ],
+        "typicalWeightKg": 3.5,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "活泼",
+          "粘人",
+          "无毛",
+          "高代谢"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "无毛猫代谢率极高需高热量高蛋白维持体温，皮肤需额外Omega营养",
+          "recommendCalorieFactor": 1.3,
+          "avoidTags": [
+            "低热量"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "高热量",
+            "美毛"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 护皮",
+            "高热量",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "皮肤病",
+            "牙齿问题"
+          ]
+        }
+      },
+      {
+        "id": "devon_rex",
+        "name": "德文卷毛",
+        "fullName": "德文卷毛猫",
+        "weightMaleKg": [
+          3,
+          4.5
+        ],
+        "weightFemaleKg": [
+          2.5,
+          3.5
+        ],
+        "typicalWeightKg": 3.5,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          16
+        ],
+        "traits": [
+          "活泼",
+          "亲人",
+          "卷毛",
+          "高智商"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "德文卷毛猫活泼好动代谢快，短卷毛需适量脂肪维持皮肤健康，高蛋白配方支持肌肉",
+          "recommendCalorieFactor": 1.1,
+          "avoidTags": [
+            "低蛋白"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "无谷",
+            "美毛"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 护肤",
+            "牛磺酸",
+            "生物素"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "髌骨脱位",
+            "遗传性肌病"
+          ]
+        }
+      },
+      {
+        "id": "bengal",
+        "name": "豹猫",
+        "fullName": "孟加拉豹猫",
+        "weightMaleKg": [
+          4.5,
+          7
+        ],
+        "weightFemaleKg": [
+          3.5,
+          5
+        ],
+        "typicalWeightKg": 5.5,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          16
+        ],
+        "traits": [
+          "活泼",
+          "野性美",
+          "高能量",
+          "聪明"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "豹猫精力极度旺盛需高蛋白高能量配方，肌肉发达需优质动物蛋白维持",
+          "recommendCalorieFactor": 1.2,
+          "avoidTags": [
+            "低蛋白",
+            "低热量"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "无谷",
+            "全肉配方"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "高动物蛋白",
+            "Omega-3"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "进行性视网膜萎缩(PRA)",
+            "丙酮酸激酶缺乏症"
+          ]
+        }
+      },
+      {
+        "id": "abyssinian",
+        "name": "阿比西尼亚",
+        "fullName": "阿比西尼亚猫",
+        "weightMaleKg": [
+          3.5,
+          5
+        ],
+        "weightFemaleKg": [
+          2.5,
+          4
+        ],
+        "typicalWeightKg": 3.8,
+        "size": "medium",
+        "lifeExpectancy": [
+          13,
+          16
+        ],
+        "traits": [
+          "活泼",
+          "好奇",
+          "黏人",
+          "运动健将"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "阿比西尼亚猫极度好动攀爬能力强，需高蛋白中高热量配方支持活动消耗",
+          "recommendCalorieFactor": 1.15,
+          "avoidTags": [
+            "低蛋白",
+            "低热量"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "无谷"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "抗氧化剂",
+            "Omega-3"
+          ],
+          "healthRisks": [
+            "进行性视网膜萎缩(PRA)",
+            "丙酮酸激酶缺乏症",
+            "髌骨脱位"
+          ]
+        }
+      },
+      {
+        "id": "russian_blue",
+        "name": "俄罗斯蓝猫",
+        "fullName": "俄罗斯蓝猫",
+        "weightMaleKg": [
+          3.5,
+          5.5
+        ],
+        "weightFemaleKg": [
+          2.5,
+          4
+        ],
+        "typicalWeightKg": 4,
+        "size": "medium",
+        "lifeExpectancy": [
+          15,
+          20
+        ],
+        "traits": [
+          "安静",
+          "优雅",
+          "短蓝毛",
+          "害羞"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "俄罗斯蓝猫安静少动易发胖，需控制热量摄入，注意泌尿道健康",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "高镁",
+            "高热量"
+          ],
+          "preferTags": [
+            "体重管理",
+            "室内猫",
+            "泌尿健康"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "Omega-3&6 护毛",
+            "蔓越莓 泌尿道"
+          ],
+          "healthRisks": [
+            "膀胱结石",
+            "肥胖",
+            "肥厚性心肌病"
+          ]
+        }
+      },
+      {
+        "id": "munchkin",
+        "name": "曼基康",
+        "fullName": "曼基康矮脚猫",
+        "weightMaleKg": [
+          2.5,
+          4
+        ],
+        "weightFemaleKg": [
+          2,
+          3.5
+        ],
+        "typicalWeightKg": 3,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "活泼",
+          "短腿",
+          "可爱",
+          "亲人"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "曼基康腿短活动受限易发胖，需严格控制体重减轻脊柱压力，选小颗粒低脂粮",
+          "recommendCalorieFactor": 0.8,
+          "avoidTags": [
+            "大颗粒",
+            "高脂",
+            "高热量"
+          ],
+          "preferTags": [
+            "体重管理",
+            "颗粒小",
+            "关节保护",
+            "小型猫"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素 护脊柱",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "脊柱前凸",
+            "漏斗胸",
+            "肥胖",
+            "骨关节炎"
+          ]
+        }
+      },
+      {
+        "id": "norwegian_forest",
+        "name": "挪威森林",
+        "fullName": "挪威森林猫",
+        "weightMaleKg": [
+          5,
+          8
+        ],
+        "weightFemaleKg": [
+          3.5,
+          6
+        ],
+        "typicalWeightKg": 6,
+        "size": "large",
+        "lifeExpectancy": [
+          14,
+          16
+        ],
+        "traits": [
+          "温顺",
+          "大型长毛",
+          "独立",
+          "耐寒"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "挪威森林猫体型大但肌肉发达，需高蛋白维持肌肉量，长毛需Omega-3&6美毛护理",
+          "recommendCalorieFactor": 1,
+          "avoidTags": [
+            "低蛋白"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "美毛",
+            "大型猫",
+            "无谷"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "葡萄糖胺 关节"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "糖原贮积病IV型",
+            "髋关节发育不良"
+          ]
+        }
+      },
+      {
+        "id": "chinchilla",
+        "name": "金吉拉",
+        "fullName": "金吉拉猫",
+        "weightMaleKg": [
+          3.5,
+          5.5
+        ],
+        "weightFemaleKg": [
+          3,
+          4.5
+        ],
+        "typicalWeightKg": 4,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          16
+        ],
+        "traits": [
+          "优雅",
+          "长毛",
+          "安静",
+          "高贵"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "金吉拉安静少动易发胖，扁平脸结构需小颗粒粮，长白毛需美毛护理注意泪痕",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "大颗粒",
+            "高盐"
+          ],
+          "preferTags": [
+            "美毛",
+            "体重管理",
+            "室内猫",
+            "颗粒小"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "生物素"
+          ],
+          "healthRisks": [
+            "多囊肾病(PKD)",
+            "泪痕",
+            "呼吸道问题",
+            "牙结石"
+          ]
+        }
+      },
+      {
+        "id": "himalayan",
+        "name": "喜马拉雅",
+        "fullName": "喜马拉雅猫",
+        "weightMaleKg": [
+          3.5,
+          5.5
+        ],
+        "weightFemaleKg": [
+          3,
+          4.5
+        ],
+        "typicalWeightKg": 4,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "温顺",
+          "长毛",
+          "重点色",
+          "安静"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "喜马拉雅猫是波斯+暹罗杂交后代，扁脸结构需小颗粒粮，长毛需频繁梳理+美毛营养",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "大颗粒",
+            "高盐"
+          ],
+          "preferTags": [
+            "美毛",
+            "体重管理",
+            "室内猫",
+            "颗粒小"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "生物素"
+          ],
+          "healthRisks": [
+            "多囊肾病(PKD)",
+            "呼吸道问题",
+            "毛球症",
+            "泪痕"
+          ]
+        }
+      },
+      {
+        "id": "singapura",
+        "name": "新加坡猫",
+        "fullName": "新加坡猫",
+        "weightMaleKg": [
+          2,
+          3
+        ],
+        "weightFemaleKg": [
+          1.5,
+          2.5
+        ],
+        "typicalWeightKg": 2.2,
+        "size": "small",
+        "lifeExpectancy": [
+          13,
+          16
+        ],
+        "traits": [
+          "活泼",
+          "体型最小",
+          "好奇",
+          "黏人"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "新加坡猫体型最小但活泼好动，需高热量密度配方+超小颗粒，少量多餐",
+          "recommendCalorieFactor": 1.15,
+          "avoidTags": [
+            "大颗粒",
+            "低热量"
+          ],
+          "preferTags": [
+            "小型猫",
+            "颗粒小",
+            "高蛋白",
+            "高消化率"
+          ],
+          "specialNutrients": [
+            "牛磺酸",
+            "高热量密度",
+            "Omega-3"
+          ],
+          "healthRisks": [
+            "丙酮酸激酶缺乏症",
+            "低血糖",
+            "牙结石"
+          ]
+        }
+      },
+      {
+        "id": "selkirk_rex",
+        "name": "塞尔凯克卷毛",
+        "fullName": "塞尔凯克卷毛猫",
+        "weightMaleKg": [
+          4,
+          6
+        ],
+        "weightFemaleKg": [
+          3,
+          5
+        ],
+        "typicalWeightKg": 4.5,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "温顺",
+          "卷毛",
+          "圆脸",
+          "安静"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "塞尔凯克卷毛猫骨架粗壮易发胖，卷毛需适量脂肪+Omega维护皮肤毛发健康",
+          "recommendCalorieFactor": 0.9,
+          "avoidTags": [
+            "高热量",
+            "低蛋白"
+          ],
+          "preferTags": [
+            "体重管理",
+            "美毛",
+            "室内猫"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 护毛",
+            "牛磺酸",
+            "生物素"
+          ],
+          "healthRisks": [
+            "肥厚性心肌病(HCM)",
+            "多囊肾病",
+            "肥胖"
+          ]
+        }
+      }
+    ],
+    "dog": [
+      {
+        "id": "golden_retriever",
+        "name": "金毛",
+        "fullName": "金毛寻回犬",
+        "weightMaleKg": [
+          29,
+          34
+        ],
+        "weightFemaleKg": [
+          25,
+          29
+        ],
+        "typicalWeightKg": 30,
+        "size": "large",
+        "lifeExpectancy": [
+          10,
+          12
+        ],
+        "traits": [
+          "温顺",
+          "聪明",
+          "亲人",
+          "易发胖"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "金毛贪吃易胖，需严格控制喂食量和零食，选低脂配方+关节保护",
+          "recommendCalorieFactor": 0.9,
+          "avoidTags": [
+            "高脂"
+          ],
+          "preferTags": [
+            "体重管理",
+            "关节保护",
+            "大型犬"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素",
+            "Omega-3"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "肥胖",
+            "肿瘤"
+          ]
+        }
+      },
+      {
+        "id": "labrador",
+        "name": "拉布拉多",
+        "fullName": "拉布拉多寻回犬",
+        "weightMaleKg": [
+          29,
+          36
+        ],
+        "weightFemaleKg": [
+          25,
+          32
+        ],
+        "typicalWeightKg": 30,
+        "size": "large",
+        "lifeExpectancy": [
+          10,
+          12
+        ],
+        "traits": [
+          "活泼",
+          "贪吃",
+          "友善",
+          "高能量"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "拉布拉多有贪吃基因极易发胖，必须严格控制热量+大量运动",
+          "recommendCalorieFactor": 0.9,
+          "avoidTags": [
+            "高脂",
+            "高热量"
+          ],
+          "preferTags": [
+            "体重管理",
+            "关节保护",
+            "大型犬"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "L-肉碱"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "肥胖",
+            "肘关节发育不良"
+          ]
+        }
+      },
+      {
+        "id": "husky",
+        "name": "哈士奇",
+        "fullName": "西伯利亚哈士奇",
+        "weightMaleKg": [
+          20,
+          27
+        ],
+        "weightFemaleKg": [
+          16,
+          23
+        ],
+        "typicalWeightKg": 22,
+        "size": "large",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "活泼",
+          "独立",
+          "拆家",
+          "耐力强"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "哈士奇代谢率高需高蛋白中脂配方维持能量，活动量大但消化系统偏敏感",
+          "recommendCalorieFactor": 1.15,
+          "avoidTags": [
+            "高碳水"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "无谷",
+            "关节保护"
+          ],
+          "specialNutrients": [
+            "Omega-3",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "眼部疾病",
+            "锌缺乏皮肤病"
+          ]
+        }
+      },
+      {
+        "id": "poodle",
+        "name": "贵宾/泰迪",
+        "fullName": "贵宾犬（泰迪）",
+        "weightMaleKg": [
+          3,
+          8
+        ],
+        "weightFemaleKg": [
+          2.5,
+          7
+        ],
+        "typicalWeightKg": 5,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "聪明",
+          "活泼",
+          "不掉毛",
+          "易流泪痕"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "泰迪体型小代谢快，需小型犬专用小颗粒粮，注意泪痕和皮肤护理",
+          "recommendCalorieFactor": 1.05,
+          "avoidTags": [
+            "大颗粒",
+            "高盐"
+          ],
+          "preferTags": [
+            "小型犬",
+            "美毛",
+            "低敏"
+          ],
+          "specialNutrients": [
+            "Omega-3&6",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "髌骨脱位",
+            "泪痕",
+            "牙结石",
+            "进行性视网膜萎缩"
+          ]
+        }
+      },
+      {
+        "id": "corgi",
+        "name": "柯基",
+        "fullName": "彭布罗克威尔士柯基犬",
+        "weightMaleKg": [
+          10,
+          14
+        ],
+        "weightFemaleKg": [
+          10,
+          13
+        ],
+        "typicalWeightKg": 12,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "活泼",
+          "聪明",
+          "短腿",
+          "易发胖"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "柯基腿短易发胖加重脊椎负担，必须严格控制体重，补充关节营养",
+          "recommendCalorieFactor": 0.85,
+          "avoidTags": [
+            "高脂",
+            "高热量"
+          ],
+          "preferTags": [
+            "体重管理",
+            "关节保护",
+            "小型犬"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素",
+            "L-肉碱"
+          ],
+          "healthRisks": [
+            "椎间盘疾病(IVDD)",
+            "髋关节发育不良",
+            "肥胖"
+          ]
+        }
+      },
+      {
+        "id": "samoyed",
+        "name": "萨摩耶",
+        "fullName": "萨摩耶犬",
+        "weightMaleKg": [
+          23,
+          30
+        ],
+        "weightFemaleKg": [
+          17,
+          25
+        ],
+        "typicalWeightKg": 23,
+        "size": "large",
+        "lifeExpectancy": [
+          12,
+          14
+        ],
+        "traits": [
+          "友善",
+          "微笑天使",
+          "白毛",
+          "掉毛多"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "萨摩耶需高蛋白维持毛发和体型，白色毛发需美毛护理配方",
+          "recommendCalorieFactor": 1.05,
+          "avoidTags": [],
+          "preferTags": [
+            "高蛋白",
+            "美毛",
+            "大型犬"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "生物素"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "糖尿病",
+            "皮肤病"
+          ]
+        }
+      },
+      {
+        "id": "german_shepherd",
+        "name": "德牧",
+        "fullName": "德国牧羊犬",
+        "weightMaleKg": [
+          30,
+          40
+        ],
+        "weightFemaleKg": [
+          22,
+          32
+        ],
+        "typicalWeightKg": 33,
+        "size": "large",
+        "lifeExpectancy": [
+          9,
+          13
+        ],
+        "traits": [
+          "忠诚",
+          "聪明",
+          "工作犬",
+          "肠胃敏感"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "德牧肠胃敏感需易消化配方，大型工作犬需高蛋白维持肌肉+关节保护",
+          "recommendCalorieFactor": 1.1,
+          "avoidTags": [
+            "低蛋白",
+            "高碳水"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "关节保护",
+            "易消化",
+            "大型犬"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素",
+            "Omega-3"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "退行性脊髓病",
+            "胃扭转"
+          ]
+        }
+      },
+      {
+        "id": "border_collie",
+        "name": "边牧",
+        "fullName": "边境牧羊犬",
+        "weightMaleKg": [
+          18,
+          23
+        ],
+        "weightFemaleKg": [
+          14,
+          19
+        ],
+        "typicalWeightKg": 18,
+        "size": "large",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "极聪明",
+          "精力旺盛",
+          "工作犬",
+          "敏捷"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "边牧智商第一精力充沛，需高蛋白高能量配方维持运动消耗，注意关节保护",
+          "recommendCalorieFactor": 1.2,
+          "avoidTags": [
+            "低蛋白",
+            "低热量"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "关节保护",
+            "无谷",
+            "大型犬"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素",
+            "Omega-3 DHA健脑"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "柯利犬眼异常(CEA)",
+            "癫痫"
+          ]
+        }
+      },
+      {
+        "id": "bichon_frise",
+        "name": "比熊",
+        "fullName": "比熊犬",
+        "weightMaleKg": [
+          5,
+          10
+        ],
+        "weightFemaleKg": [
+          4,
+          8
+        ],
+        "typicalWeightKg": 6,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "活泼",
+          "粘人",
+          "卷毛",
+          "不掉毛"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "比熊白色卷毛需美毛护理，易流泪痕注意低盐配方，小型犬需小颗粒粮",
+          "recommendCalorieFactor": 1,
+          "avoidTags": [
+            "高盐",
+            "大颗粒"
+          ],
+          "preferTags": [
+            "小型犬",
+            "美毛",
+            "低敏",
+            "颗粒小"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "生物素"
+          ],
+          "healthRisks": [
+            "泪痕",
+            "髌骨脱位",
+            "牙结石",
+            "皮肤过敏"
+          ]
+        }
+      },
+      {
+        "id": "maltese",
+        "name": "马尔济斯",
+        "fullName": "马尔济斯犬",
+        "weightMaleKg": [
+          2,
+          4
+        ],
+        "weightFemaleKg": [
+          1.8,
+          3.5
+        ],
+        "typicalWeightKg": 3,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "温顺",
+          "粘人",
+          "长白毛",
+          "体型小"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "马尔济斯体型极小代谢快，需超小颗粒粮，长白毛需美毛护理，注意低盐防泪痕",
+          "recommendCalorieFactor": 1.05,
+          "avoidTags": [
+            "大颗粒",
+            "高盐"
+          ],
+          "preferTags": [
+            "小型犬",
+            "美毛",
+            "颗粒小",
+            "高消化率"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "生物素"
+          ],
+          "healthRisks": [
+            "泪痕",
+            "髌骨脱位",
+            "牙结石",
+            "低血糖"
+          ]
+        }
+      },
+      {
+        "id": "shiba_inu",
+        "name": "柴犬",
+        "fullName": "柴犬",
+        "weightMaleKg": [
+          8,
+          11
+        ],
+        "weightFemaleKg": [
+          6.5,
+          9
+        ],
+        "typicalWeightKg": 9,
+        "size": "medium",
+        "lifeExpectancy": [
+          12,
+          16
+        ],
+        "traits": [
+          "独立",
+          "忠诚",
+          "爱干净",
+          "倔强"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "柴犬易发胖需控制食量，双层被毛掉毛期需美毛营养，有些个体肠胃敏感",
+          "recommendCalorieFactor": 0.9,
+          "avoidTags": [
+            "高脂",
+            "高盐"
+          ],
+          "preferTags": [
+            "美毛",
+            "体重管理",
+            "中型犬"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "益生菌"
+          ],
+          "healthRisks": [
+            "髌骨脱位",
+            "青光眼",
+            "过敏",
+            "甲状腺功能减退"
+          ]
+        }
+      },
+      {
+        "id": "french_bulldog",
+        "name": "法斗",
+        "fullName": "法国斗牛犬",
+        "weightMaleKg": [
+          9,
+          13
+        ],
+        "weightFemaleKg": [
+          8,
+          12
+        ],
+        "typicalWeightKg": 11,
+        "size": "small",
+        "lifeExpectancy": [
+          10,
+          12
+        ],
+        "traits": [
+          "憨厚",
+          "粘人",
+          "短鼻",
+          "安静"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "法斗极易发胖加重呼吸困难，需严格控食+低脂粮，短鼻需小颗粒防呛食，皮肤褶皱需护理",
+          "recommendCalorieFactor": 0.8,
+          "avoidTags": [
+            "大颗粒",
+            "高脂",
+            "高热量"
+          ],
+          "preferTags": [
+            "体重管理",
+            "颗粒小",
+            "低敏",
+            "关节保护"
+          ],
+          "specialNutrients": [
+            "Omega-3 抗炎",
+            "葡萄糖胺",
+            "软骨素",
+            "益生菌 防胀气"
+          ],
+          "healthRisks": [
+            "短头呼吸道综合征(BOAS)",
+            "椎间盘疾病",
+            "皮肤病",
+            "髋关节发育不良"
+          ]
+        }
+      },
+      {
+        "id": "pomeranian",
+        "name": "博美",
+        "fullName": "博美犬",
+        "weightMaleKg": [
+          1.8,
+          3.5
+        ],
+        "weightFemaleKg": [
+          1.5,
+          3
+        ],
+        "typicalWeightKg": 2.5,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          16
+        ],
+        "traits": [
+          "活泼",
+          "傲娇",
+          "毛球",
+          "警觉"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "博美体型极小代谢快，双层被毛需美毛护理，髌骨易脱位需控制体重+关节营养",
+          "recommendCalorieFactor": 1.05,
+          "avoidTags": [
+            "大颗粒",
+            "高盐"
+          ],
+          "preferTags": [
+            "小型犬",
+            "美毛",
+            "颗粒小",
+            "关节保护"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "牛磺酸",
+            "葡萄糖胺"
+          ],
+          "healthRisks": [
+            "髌骨脱位",
+            "气管塌陷",
+            "牙结石",
+            "低血糖"
+          ]
+        }
+      },
+      {
+        "id": "yorkshire_terrier",
+        "name": "约克夏",
+        "fullName": "约克夏梗",
+        "weightMaleKg": [
+          2,
+          3.2
+        ],
+        "weightFemaleKg": [
+          1.5,
+          2.8
+        ],
+        "typicalWeightKg": 2.5,
+        "size": "small",
+        "lifeExpectancy": [
+          13,
+          16
+        ],
+        "traits": [
+          "自信",
+          "活泼",
+          "丝质长毛",
+          "体型小"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "约克夏丝质长毛需高蛋白美毛配方，体型极小需超小颗粒，注意低盐防泪痕",
+          "recommendCalorieFactor": 1.05,
+          "avoidTags": [
+            "大颗粒",
+            "高盐"
+          ],
+          "preferTags": [
+            "小型犬",
+            "美毛",
+            "颗粒小",
+            "高消化率"
+          ],
+          "specialNutrients": [
+            "Omega-3&6 美毛",
+            "生物素",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "髌骨脱位",
+            "气管塌陷",
+            "门静脉分流",
+            "牙结石"
+          ]
+        }
+      },
+      {
+        "id": "schnauzer",
+        "name": "雪纳瑞",
+        "fullName": "迷你雪纳瑞",
+        "weightMaleKg": [
+          5.5,
+          9
+        ],
+        "weightFemaleKg": [
+          4.5,
+          7.5
+        ],
+        "typicalWeightKg": 7,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "聪明",
+          "活泼",
+          "梗犬",
+          "不掉毛"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "雪纳瑞易发胖+高血脂倾向，需低脂配方控制热量，定期美容维护刚毛",
+          "recommendCalorieFactor": 0.9,
+          "avoidTags": [
+            "高脂",
+            "高盐"
+          ],
+          "preferTags": [
+            "体重管理",
+            "低脂",
+            "小型犬",
+            "美毛"
+          ],
+          "specialNutrients": [
+            "Omega-3",
+            "L-肉碱",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "高脂血症",
+            "胰腺炎",
+            "膀胱结石",
+            "白内障"
+          ]
+        }
+      },
+      {
+        "id": "alaskan_malamute",
+        "name": "阿拉斯加",
+        "fullName": "阿拉斯加雪橇犬",
+        "weightMaleKg": [
+          36,
+          45
+        ],
+        "weightFemaleKg": [
+          32,
+          38
+        ],
+        "typicalWeightKg": 38,
+        "size": "large",
+        "lifeExpectancy": [
+          10,
+          14
+        ],
+        "traits": [
+          "温顺",
+          "巨犬",
+          "耐力强",
+          "掉毛王"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "阿拉斯加体型巨大需高蛋白+葡萄糖胺护关节，双层被毛掉毛严重需美毛配方，幼犬期长达18月需大型犬幼犬粮",
+          "recommendCalorieFactor": 1.05,
+          "avoidTags": [
+            "低蛋白"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "关节保护",
+            "美毛",
+            "大型犬"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素",
+            "Omega-3&6 美毛"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "胃扭转",
+            "白内障",
+            "软骨发育异常"
+          ]
+        }
+      },
+      {
+        "id": "pug",
+        "name": "巴哥",
+        "fullName": "巴哥犬",
+        "weightMaleKg": [
+          6,
+          9
+        ],
+        "weightFemaleKg": [
+          5.5,
+          8
+        ],
+        "typicalWeightKg": 7,
+        "size": "small",
+        "lifeExpectancy": [
+          12,
+          15
+        ],
+        "traits": [
+          "憨厚",
+          "温顺",
+          "短鼻",
+          "贪吃"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "巴哥极度贪吃极易肥胖加重呼吸负担，必须严格控食，短鼻需小颗粒防呛食",
+          "recommendCalorieFactor": 0.75,
+          "avoidTags": [
+            "大颗粒",
+            "高脂",
+            "高热量"
+          ],
+          "preferTags": [
+            "体重管理",
+            "颗粒小",
+            "低脂",
+            "关节保护"
+          ],
+          "specialNutrients": [
+            "Omega-3 抗炎",
+            "L-肉碱",
+            "葡萄糖胺"
+          ],
+          "healthRisks": [
+            "短头呼吸道综合征(BOAS)",
+            "肥胖",
+            "角膜溃疡",
+            "髋关节发育不良"
+          ]
+        }
+      },
+      {
+        "id": "doberman",
+        "name": "杜宾",
+        "fullName": "杜宾犬",
+        "weightMaleKg": [
+          32,
+          45
+        ],
+        "weightFemaleKg": [
+          27,
+          38
+        ],
+        "typicalWeightKg": 35,
+        "size": "large",
+        "lifeExpectancy": [
+          10,
+          13
+        ],
+        "traits": [
+          "忠诚",
+          "勇猛",
+          "护卫犬",
+          "肌肉发达"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "杜宾肌肉发达代谢高需高蛋白配方，易患扩张型心肌病需牛磺酸+Omega-3护心，胃扭转风险高需少量多餐",
+          "recommendCalorieFactor": 1.1,
+          "avoidTags": [
+            "低蛋白",
+            "高碳水"
+          ],
+          "preferTags": [
+            "高蛋白",
+            "关节保护",
+            "大型犬",
+            "无谷"
+          ],
+          "specialNutrients": [
+            "牛磺酸 护心",
+            "Omega-3",
+            "葡萄糖胺"
+          ],
+          "healthRisks": [
+            "扩张型心肌病(DCM)",
+            "胃扭转",
+            "髋关节发育不良",
+            "冯维勒布兰德病"
+          ]
+        }
+      },
+      {
+        "id": "rottweiler",
+        "name": "罗威纳",
+        "fullName": "罗威纳犬",
+        "weightMaleKg": [
+          43,
+          60
+        ],
+        "weightFemaleKg": [
+          35,
+          48
+        ],
+        "typicalWeightKg": 48,
+        "size": "large",
+        "lifeExpectancy": [
+          8,
+          11
+        ],
+        "traits": [
+          "忠诚",
+          "自信",
+          "护卫犬",
+          "力量型"
+        ],
+        "growthNeeds": {
+          "proneToObesity": true,
+          "tips": "罗威纳体型庞大易发胖加重关节负担，需大型犬关节保护配方，幼犬期需控制生长速度防骨骼问题",
+          "recommendCalorieFactor": 0.9,
+          "avoidTags": [
+            "高脂",
+            "高碳水"
+          ],
+          "preferTags": [
+            "关节保护",
+            "大型犬",
+            "体重管理",
+            "高蛋白"
+          ],
+          "specialNutrients": [
+            "葡萄糖胺",
+            "软骨素",
+            "Omega-3 抗炎"
+          ],
+          "healthRisks": [
+            "髋关节发育不良",
+            "肘关节发育不良",
+            "骨肉瘤",
+            "胃扭转"
+          ]
+        }
+      },
+      {
+        "id": "chinese_rural_dog",
+        "name": "中华田园犬",
+        "fullName": "中华田园犬",
+        "weightMaleKg": [
+          15,
+          25
+        ],
+        "weightFemaleKg": [
+          12,
+          20
+        ],
+        "typicalWeightKg": 18,
+        "size": "medium",
+        "lifeExpectancy": [
+          15,
+          20
+        ],
+        "traits": [
+          "忠诚",
+          "聪明",
+          "体质好",
+          "适应力强"
+        ],
+        "growthNeeds": {
+          "proneToObesity": false,
+          "tips": "中华田园犬体质强健适应力好，基因多样性高较少遗传病，推荐均衡天然配方即可",
+          "recommendCalorieFactor": 1,
+          "avoidTags": [],
+          "preferTags": [
+            "天然",
+            "均衡",
+            "高性价比"
+          ],
+          "specialNutrients": [
+            "均衡维生素",
+            "Omega-3",
+            "牛磺酸"
+          ],
+          "healthRisks": [
+            "乡村散养易感染寄生虫",
+            "口腔问题"
+          ]
+        }
+      }
+    ]
+  }
+};

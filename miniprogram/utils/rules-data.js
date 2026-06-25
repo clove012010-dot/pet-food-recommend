@@ -1,4 +1,4 @@
-const rules = require('../data/rules.json');
+const rules = require('../data/rules');
 module.exports = {
   diseases: rules.diseases,
   lifeStageRules: rules.life_stage_rules || [],

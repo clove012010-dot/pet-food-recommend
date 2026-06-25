@@ -1,4 +1,4 @@
-/* 小程序版推荐引擎 — 零 fs，数据通过 require('../../data/xxx.json') 加载 */
+/* 小程序版推荐引擎 — 零 fs，数据通过 utils/*-data.js 加载 */
 const { loadFoods } = require('./foods-data');
 const { loadBreeds } = require('./breeds-data');
 const { loadRules, loadLifeStageRules } = require('./rules-data');
