@@ -1,0 +1,34 @@
+.profile-bar { display: flex; align-items: center; gap: 12px; padding: 14px 18px; }
+.profile-current { flex: 1; display: flex; align-items: center; gap: 8px; }
+.profile-label { font-size: 12px; color: var(--text-light); white-space: nowrap; }
+.profile-name-input { border: none; background: transparent; font-size: 16px; font-weight: 600; color: var(--text); flex: 1; padding: 2px 4px; }
+.profile-count { background: var(--bg); color: var(--text-light); font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+.profile-actions { display: flex; align-items: center; gap: 6px; }
+.profile-empty { border: 2px dashed var(--border); background: #fffdf8; display: flex; justify-content: center; }
+.empty-box { text-align: center; padding: 20px; color: var(--text-light); }
+.empty-icon { font-size: 32px; }
+.btn-sm { padding: 5px 10px; border: 2px solid var(--border); border-radius: 8px; background: #fff; color: var(--primary); font-size: 13px; }
+.btn-primary { background: var(--primary); color: #fff; border-radius: 8px; padding: 8px 20px; font-size: 14px; }
+.btn-danger { color: var(--danger); }
+.btn-submit { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; margin-top: 8px; }
+.tab-bar { display: flex; margin: 0 0 12px; background: #fff; border-radius: 12px; overflow: hidden; }
+.tab-btn { flex: 1; text-align: center; padding: 12px 8px; font-size: 14px; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #fff; }
+.tab-panel { display: block; }
+.form-row { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+.form-group { flex: 1; min-width: 160px; }
+.form-group input { width: 100%; padding: 9px 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; }
+.label { display: block; font-size: 13px; color: var(--primary); margin-bottom: 5px; font-weight: 600; }
+.picker { padding: 9px 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text); background: #fdfaf7; }
+.h2 { font-size: 18px; color: var(--primary); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid var(--bg); display: block; }
+.cb-item { margin-right: 12px; font-size: 13px; }
+.food-card { background: #fdfaf7; border: 2px solid var(--bg); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.food-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.food-name { font-size: 16px; color: var(--text); font-weight: 600; }
+.food-score { font-size: 22px; font-weight: 700; color: var(--primary); }
+.food-desc { font-size: 13px; color: #6b5b4f; margin: 6px 0; }
+.nutrition-grid { display: flex; gap: 8px; margin: 8px 0; }
+.n-item { flex: 1; text-align: center; padding: 8px; background: #fff; border-radius: 8px; }
+.n-val { font-size: 15px; font-weight: 700; color: var(--primary); display: block; }
+.n-label { font-size: 11px; color: var(--text-light); }
+.feed-guide { font-size: 13px; color: var(--success); display: block; margin-top: 6px; }

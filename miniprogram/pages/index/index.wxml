@@ -1,1 +1,107 @@
-<view class="container">宠物粮推荐</view>
+<!-- 档案栏 -->
+<view class="profile-bar card" wx:if="{{profiles.length > 0}}">
+  <view class="profile-current">
+    <text class="profile-label">当前档案</text>
+    <input value="{{activeProfile.name}}" bindblur="onProfileNameSave" class="profile-name-input" />
+    <text class="profile-count">{{activeIdx}}/{{profiles.length}}</text>
+  </view>
+  <view class="profile-actions">
+    <picker bindchange="onSwitchProfile" value="{{activeIdx}}" range="{{profileNames}}">
+      <view class="btn-sm">{{activeProfile.name || '选择'}}</view>
+    </picker>
+    <button class="btn-sm" bindtap="onNewProfile">➕</button>
+    <button class="btn-sm" bindtap="onCopyProfile">📋</button>
+    <button class="btn-sm" bindtap="onSaveProfile">💾</button>
+    <button class="btn-sm btn-danger" bindtap="onDeleteProfile">🗑</button>
+  </view>
+</view>
+<view class="profile-empty card" wx:else>
+  <view class="empty-box">
+    <text class="empty-icon">🐾</text>
+    <text>还没有宠物档案</text>
+    <button class="btn-primary" bindtap="onNewProfile">🐾 创建第一个档案</button>
+  </view>
+</view>
+
+<!-- Tab 导航 -->
+<view class="tab-bar">
+  <view class="tab-btn {{currentTab==='recommend'?'active':''}}" bindtap="onSwitchTab" data-tab="recommend">📋 推荐</view>
+  <view class="tab-btn {{currentTab==='feeding'?'active':''}}" bindtap="onSwitchTab" data-tab="feeding">🍽 喂食</view>
+  <view class="tab-btn {{currentTab==='vaccination'?'active':''}}" bindtap="onSwitchTab" data-tab="vaccination">💉 疫苗</view>
+</view>
+
+<!-- 推荐面板 -->
+<view wx:if="{{currentTab==='recommend'}}" class="tab-panel">
+  <view class="card">
+    <text class="h2">📋 基本信息</text>
+    <view class="form-row">
+      <view class="form-group">
+        <text class="label">宠物种类</text>
+        <picker bindchange="onSpeciesChange" value="{{formData.speciesIdx}}" range="{{speciesOptions}}">
+          <view class="picker">{{speciesOptions[formData.speciesIdx] || '请选择'}}</view>
+        </picker>
+      </view>
+      <view class="form-group">
+        <text class="label">品种</text>
+        <picker bindchange="onBreedChange" value="{{breedIdx}}" range="{{breedNames}}">
+          <view class="picker">{{breedNames[breedIdx] || '请选择'}}</view>
+        </picker>
+      </view>
+    </view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">年龄(月)</text><input value="{{formData.ageMonths}}" bindinput="onInput" data-field="ageMonths" type="number" /></view>
+      <view class="form-group"><text class="label">体重(kg)</text><input value="{{formData.weightKg}}" bindinput="onInput" data-field="weightKg" type="digit" /></view>
+    </view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">性别</text><picker bindchange="onSexChange" value="{{sexIdx}}" range="{{sexOptions}}"><view class="picker">{{sexOptions[sexIdx]}}</view></picker></view>
+      <view class="form-group"><text class="label">绝育</text><picker bindchange="onNeuteredChange" value="{{nuteredIdx}}" range="{{nuteredOptions}}"><view class="picker">{{nuteredOptions[nuteredIdx]}}</view></picker></view>
+    </view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">体态评分</text><picker bindchange="onBcsChange" value="{{bcsIdx}}" range="{{bcsOptions}}"><view class="picker">{{bcsOptions[bcsIdx]}}</view></picker></view>
+      <view class="form-group"><text class="label">活动量</text><picker bindchange="onActivityChange" value="{{activityIdx}}" range="{{activityOptions}}"><view class="picker">{{activityOptions[activityIdx]}}</view></picker></view>
+    </view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">预算</text><picker bindchange="onBudgetChange" value="{{budgetIdx}}" range="{{budgetOptions}}"><view class="picker">{{budgetOptions[budgetIdx]}}</view></picker></view>
+      <view class="form-group"><text class="label">护理目标</text><picker bindchange="onGoalChange" value="{{goalIdx}}" range="{{goalOptions}}"><view class="picker">{{goalOptions[goalIdx]}}</view></picker></view>
+    </view>
+    <view class="form-row">
+      <view class="form-group"><text class="label">粮食品类</text>
+        <checkbox-group bindchange="onFoodTypeChange">
+          <label wx:for="{{foodTypeOptions}}" wx:key="*this" class="cb-item"><checkbox value="{{item}}" checked="{{formData.foodType.indexOf(item)>-1}}" />{{item}}</label>
+        </checkbox-group>
+      </view>
+    </view>
+    <button class="btn-submit" bindtap="onSubmit">🔍 为我推荐</button>
+  </view>
+
+  <!-- 推荐结果 -->
+  <view wx:if="{{showResults}}" class="card">
+    <text class="h2">🏆 推荐结果</text>
+    <canvas type="2d" id="radarChart" style="width:400px;height:400px;max-width:100%" />
+    <canvas type="2d" id="phosphorusChart" style="width:400px;height:280px;max-width:100%" />
+    <view wx:for="{{recommendations}}" wx:key="id" class="food-card">
+      <view class="food-header">
+        <text class="food-name">{{item.brand}} · {{item.name}}</text>
+        <text class="food-score">{{item.totalScore}}分</text>
+      </view>
+      <text class="food-desc">{{item.desc}}</text>
+      <view class="nutrition-grid">
+        <view class="n-item"><text class="n-val">{{item.protein}}%</text><text class="n-label">蛋白</text></view>
+        <view class="n-item"><text class="n-val">{{item.fat}}%</text><text class="n-label">脂肪</text></view>
+        <view class="n-item"><text class="n-val">{{item.phosphorus}}%</text><text class="n-label">磷</text></view>
+        <view class="n-item"><text class="n-val">{{item.calorie_per_100g}}</text><text class="n-label">kcal</text></view>
+      </view>
+      <text class="feed-guide">建议每日{{item.feedingGuide.gramsPerDay}}g × {{item.feedingGuide.mealsPerDay}}餐</text>
+    </view>
+  </view>
+</view>
+
+<!-- 喂食面板 -->
+<view wx:if="{{currentTab==='feeding'}}" class="tab-panel">
+  <view class="card"><text class="h2">🍽 喂食日记</text><text>需小程序版 pet-profile 接入，v1 预留</text></view>
+</view>
+
+<!-- 疫苗面板 -->
+<view wx:if="{{currentTab==='vaccination'}}" class="tab-panel">
+  <view class="card"><text class="h2">💉 疫苗日记</text><text>需小程序版 pet-profile 接入，v1 预留</text></view>
+</view>
