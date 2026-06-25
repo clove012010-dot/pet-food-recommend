@@ -2407,6 +2407,463 @@
       "price_range": "中",
       "desc": "天津产，7岁以上适用，中蛋白+关节保护+抗氧化配方，维持老年犬活力（数据来源：2024官方标注）",
       "price_rmb": "约130-180元/2.5kg"
+    },
+    {
+      "id": 80,
+      "brand": "巅峰",
+      "name": "巅峰鸡肉猫罐头",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 9,
+      "fat": 5.5,
+      "fiber": 0.5,
+      "moisture": 78,
+      "phosphorus": 0.2,
+      "sodium": 0.08,
+      "magnesium": 0.02,
+      "ash": 2.5,
+      "calorie_per_100g": 95,
+      "protein_sources": [
+        "鸡肉",
+        "鸡肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "无谷",
+        "新西兰进口"
+      ],
+      "price_range": "高",
+      "desc": "新西兰进口,92%含肉量,高肉无谷猫罐头(数据来源:2024官方标注)",
+      "price_rmb": "约25-35元/85g"
+    },
+    {
+      "id": 81,
+      "brand": "希尔斯",
+      "name": "希尔斯i/d肠胃猫罐头",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 7.5,
+      "fat": 4.5,
+      "fiber": 0.3,
+      "moisture": 80,
+      "phosphorus": 0.15,
+      "sodium": 0.09,
+      "magnesium": 0.015,
+      "ash": 1.5,
+      "calorie_per_100g": 85,
+      "protein_sources": [
+        "鸡肉",
+        "猪肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "处方粮",
+        "消化护理",
+        "正规进口"
+      ],
+      "price_range": "高",
+      "desc": "美国进口,肠胃护理处方罐,适宜消化敏感猫(数据来源:2024官方标注)",
+      "price_rmb": "约28-38元/156g"
+    },
+    {
+      "id": 82,
+      "brand": "希尔斯",
+      "name": "希尔c/d泌尿猫罐头",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 8,
+      "fat": 5,
+      "fiber": 0.4,
+      "moisture": 79,
+      "phosphorus": 0.14,
+      "sodium": 0.08,
+      "magnesium": 0.013,
+      "ash": 1.5,
+      "calorie_per_100g": 90,
+      "protein_sources": [
+        "鸡肉",
+        "猪肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "处方粮",
+        "泌尿护理",
+        "低镁",
+        "正规进口"
+      ],
+      "price_range": "高",
+      "desc": "美国进口,泌尿处方罐,低镁控制结晶,维持尿液pH(数据来源:2024官方标注)",
+      "price_rmb": "约28-38元/156g"
+    },
+    {
+      "id": 83,
+      "brand": "皇家",
+      "name": "皇家室内成猫罐头",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 8,
+      "fat": 3,
+      "fiber": 0.8,
+      "moisture": 82,
+      "phosphorus": 0.16,
+      "sodium": 0.1,
+      "magnesium": 0.015,
+      "ash": 1.8,
+      "calorie_per_100g": 75,
+      "protein_sources": [
+        "鸡肉",
+        "猪肉"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "室内猫",
+        "上海产"
+      ],
+      "price_range": "中",
+      "desc": "上海产,室内成猫专用罐,蛋白质适中维护理想体态(数据来源:2024官方标注)",
+      "price_rmb": "约12-18元/85g"
+    },
+    {
+      "id": 84,
+      "brand": "皇家",
+      "name": "皇家猫肾脏处方罐头",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 7,
+      "fat": 6,
+      "fiber": 0.5,
+      "moisture": 80,
+      "phosphorus": 0.12,
+      "sodium": 0.07,
+      "magnesium": 0.012,
+      "ash": 1.5,
+      "calorie_per_100g": 88,
+      "protein_sources": [
+        "鸡肉",
+        "猪肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "处方粮",
+        "低磷",
+        "肾脏护理",
+        "上海产"
+      ],
+      "price_range": "高",
+      "desc": "上海产,低磷肾脏护理处方罐,添加Omega-3抗氧化(数据来源:2024官方标注)",
+      "price_rmb": "约25-35元/85g"
+    },
+    {
+      "id": 85,
+      "brand": "渴望",
+      "name": "渴望鸡肉猫罐头",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 12,
+      "fat": 6,
+      "fiber": 0.5,
+      "moisture": 78,
+      "phosphorus": 0.22,
+      "sodium": 0.09,
+      "magnesium": 0.02,
+      "ash": 2.5,
+      "calorie_per_100g": 105,
+      "protein_sources": [
+        "鸡肉",
+        "鸡肝",
+        "火鸡"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "无谷",
+        "高蛋白",
+        "原装进口"
+      ],
+      "price_range": "高",
+      "desc": "加拿大进口,95%动物原料,高蛋白猫罐头(数据来源:2024官方标注)",
+      "price_rmb": "约28-38元/85g"
+    },
+    {
+      "id": 86,
+      "brand": "K9 Natural",
+      "name": "K9冻干鸡肉猫罐头",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 10,
+      "fat": 7,
+      "fiber": 0.3,
+      "moisture": 80,
+      "phosphorus": 0.18,
+      "sodium": 0.08,
+      "magnesium": 0.018,
+      "ash": 2,
+      "calorie_per_100g": 100,
+      "protein_sources": [
+        "鸡肉",
+        "鸡心",
+        "鸡肝"
+      ],
+      "tags": [
+        "湿粮",
+        "冻干",
+        "无谷",
+        "生食级",
+        "新西兰进口"
+      ],
+      "price_range": "高",
+      "desc": "新西兰进口,冻干生食配方,含肉率90%+(数据来源:2024官方标注)",
+      "price_rmb": "约30-40元/85g"
+    },
+    {
+      "id": 87,
+      "brand": "网易严选",
+      "name": "网易严选猫罐头鸡肉配方",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 10,
+      "fat": 4,
+      "fiber": 0.5,
+      "moisture": 82,
+      "phosphorus": 0.18,
+      "sodium": 0.09,
+      "magnesium": 0.018,
+      "ash": 2,
+      "calorie_per_100g": 85,
+      "protein_sources": [
+        "鸡肉",
+        "鸡肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "国产",
+        "性价比"
+      ],
+      "price_range": "中低",
+      "desc": "国产性价比猫罐头,无谷低敏配方(数据来源:2024包装标注)",
+      "price_rmb": "约8-15元/85g"
+    },
+    {
+      "id": 88,
+      "brand": "卫仕",
+      "name": "卫仕猫罐头益生菌鸡肉配方",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 9,
+      "fat": 3.5,
+      "fiber": 0.5,
+      "moisture": 83,
+      "phosphorus": 0.16,
+      "sodium": 0.08,
+      "magnesium": 0.015,
+      "ash": 1.8,
+      "calorie_per_100g": 80,
+      "protein_sources": [
+        "鸡肉"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "国产",
+        "益生菌"
+      ],
+      "price_range": "中低",
+      "desc": "国产益生菌猫罐头,添加枯草芽孢杆菌维持肠道健康(数据来源:2024包装标注)",
+      "price_rmb": "约8-15元/85g"
+    },
+    {
+      "id": 89,
+      "brand": "麦富迪",
+      "name": "麦富迪猫罐头金枪鱼配方",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 10,
+      "fat": 3,
+      "fiber": 0.4,
+      "moisture": 84,
+      "phosphorus": 0.15,
+      "sodium": 0.1,
+      "magnesium": 0.016,
+      "ash": 1.5,
+      "calorie_per_100g": 75,
+      "protein_sources": [
+        "金枪鱼",
+        "鱼肉"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "国产",
+        "性价比"
+      ],
+      "price_range": "低",
+      "desc": "国产平价猫罐头,金枪鱼主原料口味佳(数据来源:2024包装标注)",
+      "price_rmb": "约5-10元/85g"
+    },
+    {
+      "id": 90,
+      "brand": "希宝",
+      "name": "希宝猫罐头金枪鱼配方",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 11,
+      "fat": 2.5,
+      "fiber": 0.3,
+      "moisture": 84,
+      "phosphorus": 0.17,
+      "sodium": 0.08,
+      "magnesium": 0.015,
+      "ash": 2,
+      "calorie_per_100g": 75,
+      "protein_sources": [
+        "金枪鱼"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "正规进口"
+      ],
+      "price_range": "中",
+      "desc": "玛氏旗下进口猫罐头,单一金枪鱼蛋白源(数据来源:2024官方标注)",
+      "price_rmb": "约12-18元/85g"
+    },
+    {
+      "id": 91,
+      "brand": "珍致",
+      "name": "珍致猫罐头鸡肉配方",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 10,
+      "fat": 3,
+      "fiber": 0.3,
+      "moisture": 84,
+      "phosphorus": 0.16,
+      "sodium": 0.09,
+      "magnesium": 0.016,
+      "ash": 2,
+      "calorie_per_100g": 78,
+      "protein_sources": [
+        "鸡肉",
+        "鸡肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "正规进口"
+      ],
+      "price_range": "中",
+      "desc": "雀巢旗下进口猫罐头,Fancy Feast品牌全球销量领先(数据来源:2024官方标注)",
+      "price_rmb": "约10-16元/85g"
+    },
+    {
+      "id": 92,
+      "brand": "阿飞和巴弟",
+      "name": "阿飞和巴弟猫罐头鸡肉冻干双拼",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 11,
+      "fat": 4,
+      "fiber": 0.5,
+      "moisture": 80,
+      "phosphorus": 0.2,
+      "sodium": 0.09,
+      "magnesium": 0.018,
+      "ash": 2.2,
+      "calorie_per_100g": 90,
+      "protein_sources": [
+        "鸡肉",
+        "鸡肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "冻干双拼",
+        "国产",
+        "无谷"
+      ],
+      "price_range": "中",
+      "desc": "国产冻干双拼猫罐头,含生骨肉冻干粒(数据来源:2024包装标注)",
+      "price_rmb": "约10-18元/85g"
+    },
+    {
+      "id": 93,
+      "brand": "蓝爵",
+      "name": "蓝爵猫罐头鸡肉配方",
+      "species": "cat",
+      "life_stage": "adult",
+      "breed_size": "all",
+      "protein": 10,
+      "fat": 5,
+      "fiber": 0.4,
+      "moisture": 80,
+      "phosphorus": 0.19,
+      "sodium": 0.08,
+      "magnesium": 0.017,
+      "ash": 2,
+      "calorie_per_100g": 92,
+      "protein_sources": [
+        "鸡肉",
+        "鸡肝"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "原装进口",
+        "无谷"
+      ],
+      "price_range": "中",
+      "desc": "美国原装进口Blue Buffalo,原肉第一原料(数据来源:2024官方标注)",
+      "price_rmb": "约15-22元/85g"
+    },
+    {
+      "id": 94,
+      "brand": "皇家",
+      "name": "皇家离乳期奶糕湿粮",
+      "species": "cat",
+      "life_stage": "kitten",
+      "breed_size": "all",
+      "protein": 9,
+      "fat": 4,
+      "fiber": 0.5,
+      "moisture": 82,
+      "phosphorus": 0.2,
+      "sodium": 0.1,
+      "magnesium": 0.018,
+      "ash": 2,
+      "calorie_per_100g": 85,
+      "protein_sources": [
+        "鸡肉",
+        "牛奶蛋白"
+      ],
+      "tags": [
+        "湿粮",
+        "罐头",
+        "幼猫",
+        "易消化",
+        "上海产"
+      ],
+      "price_range": "中",
+      "desc": "上海产,4-12月离乳幼猫奶糕慕斯,容易舔食(数据来源:2024官方标注)",
+      "price_rmb": "约15-20元/85g"
     }
   ]
 }

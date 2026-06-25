@@ -67,8 +67,11 @@
     <view class="form-row">
       <view class="form-group"><text class="label">粮食品类</text>
         <checkbox-group bindchange="onFoodTypeChange">
-          <label wx:for="{{foodTypeOptions}}" wx:key="*this" class="cb-item"><checkbox value="{{item}}" checked="{{formData.foodType.indexOf(item)>-1}}" />{{item}}</label>
+          <label wx:for="{{foodTypeOptions}}" wx:key="*this" class="cb-item">
+            <checkbox value="{{item}}" checked="{{!!foodTypeChecked[item]}}" />{{item}}
+          </label>
         </checkbox-group>
+        <text class="form-hint">{{foodTypeCheckedHint}}</text>
       </view>
     </view>
     <button class="btn-submit" bindtap="onSubmit">🔍 为我推荐</button>

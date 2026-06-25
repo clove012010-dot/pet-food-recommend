@@ -294,7 +294,7 @@ function validateInput(input) {
   if (budgetLevel !== undefined && budgetLevel !== null && !['low', 'medium', 'high', 'any'].includes(budgetLevel)) errors.push('budgetLevel must be low/medium/high/any');
   if (foodType !== undefined && foodType !== null) {
     if (!Array.isArray(foodType)) errors.push('foodType must be an array');
-    else { const valid = ['dry', 'freeze_dried', 'grain_free']; for (const ft of foodType) if (!valid.includes(ft)) errors.push(`foodType invalid: ${ft}`); }
+    else { const valid = ['dry', 'freeze_dried', 'grain_free', 'wet']; for (const ft of foodType) if (!valid.includes(ft)) errors.push(`foodType invalid: ${ft}`); }
   }
   return errors.length > 0 ? { valid: false, errors } : { valid: true };
 }
@@ -472,6 +472,7 @@ function recommend(input) {
       let passes = true;
       for (const ft of foodTypeFilters) {
         if (ft === 'freeze_dried') { if (!food.tags.some(t => t.includes('冻干') || t.includes('风干') || t.includes('生食'))) { passes = false; break; } }
+        else if (ft === 'wet') { if (!food.tags.some(t => t.includes('湿粮') || t.includes('罐头') || t.includes('餐包'))) { passes = false; break; } }
         else if (ft === 'grain_free') { if (!food.tags.some(t => t.includes('无谷'))) { passes = false; break; } }
       }
       if (!passes) { excludedFoods.push({ food, reason: `不符合粮食品类筛选：${foodTypeFilters.join('+')}` }); continue; }

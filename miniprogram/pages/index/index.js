@@ -9,7 +9,7 @@ const bcsOptions = ['1极瘦','2偏瘦','3略瘦','4稍瘦','5标准','6略胖',
 const activityOptions = ['较少', '正常', '较多'];
 const budgetOptions = ['不限', '实惠', '中等', '高端'];
 const goalOptions = ['无', '减重', '美毛', '肠胃', '低敏', '关节', '泌尿', '性价比'];
-const foodTypeOptions = ['干粮', '含冻干', '无谷'];
+const foodTypeOptions = ['干粮', '含冻干', '无谷', '湿粮'];
 const stoolOptions = ['1稀软', '2偏软', '3正常', '4偏干', '5干硬'];
 const tearOptions = ['1无', '2轻微', '3明显', '4偏多', '5严重'];
 const skinOptions = ['1红痒', '2轻屑', '3一般', '4良好', '5健康光泽'];
@@ -22,7 +22,9 @@ Page({
     stoolOptions, tearOptions, skinOptions,
     breedNames: [], speciesIdx: -1, breedIdx: -1,
     sexIdx: 1, nuteredIdx: 1, bcsIdx: 4, activityIdx: 1, budgetIdx: 0, goalIdx: 0,
-    formData: { species: '', breedId: '', ageMonths: '', weightKg: '', sex: 'male', neutered: 'unknown', bodyConditionScore: 5, activityLevel: 'normal', budgetLevel: 'any', preferredGoal: '', foodType: ['dry'], allergies: [], diseases: [] },
+    formData: { species: '', breedId: '', ageMonths: '', weightKg: '', sex: 'male', neutered: 'unknown', bodyConditionScore: 5, activityLevel: 'normal', budgetLevel: 'any', preferredGoal: '', foodType: [], allergies: [], diseases: [] },
+    foodTypeChecked: { '干粮': false, '含冻干': false, '无谷': false, '湿粮': false },
+    foodTypeCheckedHint: '不选 = 不过滤',
     showResults: false, recommendations: [],
     feedDate: '', feedFoodName: '', feedGrams: '', feedStool: '', feedStoolLabel: '', feedTear: '', feedTearLabel: '', feedSkin: '', feedSkinLabel: '', feedNote: '', feedHint: '', feedList: [],
     vaxDate: '', vaxName: '', vaxNextDue: '', vaxVet: '', vaxNote: '', vaxHint: '', vaxAlerts: [], vaxList: [],
@@ -82,9 +84,15 @@ Page({
 
   onFoodTypeChange(e) {
     const vals = e.detail.value;
-    this.setData({ 'formData.foodType': vals.map(v => {
-      if (v === '干粮') return 'dry'; if (v === '含冻干') return 'freeze_dried'; if (v === '无谷') return 'grain_free'; return 'dry';
-    })});
+    const m = { '干粮': 'dry', '含冻干': 'freeze_dried', '无谷': 'grain_free', '湿粮': 'wet' };
+    const checked = {};
+    this.data.foodTypeOptions.forEach(o => checked[o] = false);
+    vals.forEach(v => checked[v] = true);
+    this.setData({
+      foodTypeChecked: checked,
+      foodTypeCheckedHint: vals.length === 0 ? '不选 = 不过滤' : '已选 ' + vals.length + ' 项',
+      'formData.foodType': vals.map(v => m[v] || v)
+    });
   },
 
   onSwitchTab(e) {

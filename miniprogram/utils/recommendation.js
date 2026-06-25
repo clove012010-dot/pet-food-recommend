@@ -146,7 +146,7 @@ function recommend(input) {
     }
     if (ft && ft.length > 0) {
       let ok = true;
-      for (const f of ft) { if (f === 'freeze_dried' && !food.tags.some(t => t.includes('冻干') || t.includes('风干') || t.includes('生食'))) { ok = false; break; } else if (f === 'grain_free' && !food.tags.some(t => t.includes('无谷'))) { ok = false; break; } }
+      for (const f of ft) { if (f === 'freeze_dried' && !food.tags.some(t => t.includes('冻干') || t.includes('风干') || t.includes('生食'))) { ok = false; break; } else if (f === 'wet' && !food.tags.some(t => t.includes('湿粮') || t.includes('罐头') || t.includes('餐包'))) { ok = false; break; } else if (f === 'grain_free' && !food.tags.some(t => t.includes('无谷'))) { ok = false; break; } }
       if (!ok) { excluded.push({ food, reason: '品类不匹配' }); continue; }
     }
     candidates.push(food);
