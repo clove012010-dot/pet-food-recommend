@@ -1,0 +1,176 @@
+
+> pet-food-recommend@2.0.0 test
+> node --test tests/*.test.js
+
+▶ validateFeedingLog
+  ✔ should reject missing date (0.5828ms)
+  ✔ should reject grams <= 0 (0.1339ms)
+  ✔ should reject future date (0.1546ms)
+  ✔ should reject stoolScore out of 1-5 (0.1159ms)
+  ✔ should reject missing foodId (0.1522ms)
+  ✔ should accept valid log (0.109ms)
+✔ validateFeedingLog (2.5439ms)
+▶ feedingLogFromFormData ↔ formValuesFromFeedingLog
+  ✔ should roundtrip petId (0.1809ms)
+  ✔ should roundtrip scores as null when empty (0.0707ms)
+✔ feedingLogFromFormData ↔ formValuesFromFeedingLog (0.3459ms)
+▶ FeedingLogStore
+  ✔ should create log with id and timestamps (0.7081ms)
+  ✔ should update without changing id or createdAt (0.1688ms)
+  ✔ should filterByPet correctly (5.3539ms)
+  ✔ should filterByDateRange within endpoints (0.1933ms)
+  ✔ should handle corrupted JSON gracefully (0.4926ms)
+  ✔ should delete log and return true (0.1144ms)
+✔ FeedingLogStore (7.2033ms)
+▶ validateProfile
+  ✔ should reject empty name (0.6316ms)
+  ✔ should reject invalid species (0.1143ms)
+  ✔ should reject empty breedId (0.0895ms)
+  ✔ should reject age out of range (0.117ms)
+  ✔ should reject weight out of range (0.1035ms)
+  ✔ should reject BCS out of range (0.0894ms)
+  ✔ should accept valid profile (0.0797ms)
+✔ validateProfile (2.0788ms)
+▶ normalizeProfile
+  ✔ should normalize neutered true/false/unknown (0.2634ms)
+  ✔ should normalize null targetWeightKg (0.1206ms)
+  ✔ should preserve foodType array (0.6138ms)
+  ✔ should default foodType to dry if not array (0.1287ms)
+  ✔ should default arrays for allergies and diseases (0.0608ms)
+✔ normalizeProfile (1.3972ms)
+▶ profileFromFormData ↔ formValuesFromProfile roundtrip
+  ✔ should roundtrip neutered three states (0.141ms)
+  ✔ should roundtrip targetWeightKg null (0.1532ms)
+  ✔ should preserve array order (0.082ms)
+  ✔ should handle empty arrays (0.0645ms)
+✔ profileFromFormData ↔ formValuesFromProfile roundtrip (0.9983ms)
+▶ ProfileStore CRUD
+  ✔ should create profile with id and timestamps (0.8695ms)
+  ✔ should return null for unknown id (0.0931ms)
+  ✔ should update and bump updatedAt (12.9411ms)
+  ✔ should delete and reassign active (0.3064ms)
+  ✔ should clear active when last profile deleted (0.1339ms)
+  ✔ should duplicate with (副本) suffix (0.1924ms)
+  ✔ should survive JSON storage roundtrip (0.07ms)
+  ✔ should return empty array for corrupted JSON (0.0732ms)
+  ✔ should getActive return first if active not set (0.0898ms)
+  ✔ should return null from update on nonexistent id (0.0995ms)
+  ✔ should return false from delete on nonexistent id (0.1174ms)
+  ✔ should return null from duplicate on nonexistent id (0.0843ms)
+✔ ProfileStore CRUD (15.4385ms)
+▶ pet-records schema
+  ✔ should createFeedingLog with id + timestamps and not mutate input (0.145ms)
+  ✔ should createVaccinationLog with id + timestamps (0.0608ms)
+  ✔ should have distinct id prefixes for different record types (0.0444ms)
+  ✔ should return null when required fields missing (0.0339ms)
+✔ pet-records schema (0.3599ms)
+▶ mergeRestrictions
+  ✔ should merge max restrictions by taking the smaller value (0.6652ms)
+  ✔ should merge min restrictions by taking the larger value (0.1063ms)
+  ✔ should track sources (0.5911ms)
+  ✔ should collect tips and ingredients (0.1673ms)
+✔ mergeRestrictions (2.2024ms)
+▶ validateInput
+  ✔ should accept valid input (0.3229ms)
+  ✔ should reject invalid species (0.0907ms)
+  ✔ should reject empty breedId (0.1033ms)
+  ✔ should reject out-of-range ageMonths (0.1036ms)
+  ✔ should reject invalid bodyConditionScore (0.0988ms)
+  ✔ should reject unknown disease ids (0.4207ms)
+  ✔ should accept known disease id (0.7209ms)
+  ✔ should handle optional fields (0.0878ms)
+✔ validateInput (2.2693ms)
+▶ calcEnergy
+  ✔ should calculate RER correctly (0.1695ms)
+  ✔ should apply neutered factor (0.1438ms)
+  ✔ should apply activity factor (0.0709ms)
+  ✔ should apply body condition factor (0.0602ms)
+✔ calcEnergy (0.568ms)
+▶ Static file security
+  ✔ should not allow path traversal (0.0992ms)
+✔ Static file security (0.1626ms)
+▶ recommend (offline)
+  ✔ should return error for invalid input (0.487ms)
+  ✔ should return recommendations (1.7814ms)
+  ✔ kidney: top5 phosphorus <= 0.8 (0.6529ms)
+  ✔ pancreatitis: top5 fat <= 12 (0.2867ms)
+  ✔ heart: top5 sodium <= 0.25 (0.2586ms)
+  ✔ allergy: exclude chicken (0.2277ms)
+  ✔ should return excludedFoods (0.2093ms)
+  ✔ obesity: top3 fat <= 14 (0.1478ms)
+  ✔ senior dog: fat<=14 phosphorus<=1.0 (0.1804ms)
+  ✔ sort stability (0.1833ms)
+  ✔ senior cat: phosphorus<=0.9 sodium<=0.3 (0.1737ms)
+  ✔ kitten: >=3 recommendations (0.0677ms)
+✔ recommend (offline) (4.8877ms)
+▶ calcHealthSafety
+  ✔ should return 40 when no restrictions (0.598ms)
+  ✔ should cap at 25 when warnings exist (0.1486ms)
+  ✔ should penalize excess protein (0.1108ms)
+  ✔ should penalize excess fat (0.0978ms)
+  ✔ should penalize multiple protein sources for allergy restriction (0.0798ms)
+✔ calcHealthSafety (1.6216ms)
+▶ calcLifeStageFit
+  ✔ should return 15 for all life stage (0.0824ms)
+  ✔ should return 15 for exact match (0.0686ms)
+  ✔ should return 12 for adult<->senior interchange (0.102ms)
+  ✔ should return 0 for puppy feed given adult dog (0.1196ms)
+✔ calcLifeStageFit (0.5825ms)
+▶ calcBreedFit
+  ✔ should boost score when food matches breed prefer tag (0.2302ms)
+  ✔ should penalize when food hits avoid tag (0.6391ms)
+  ✔ should return default 10 when no breed info (0.0735ms)
+✔ calcBreedFit (1.0818ms)
+▶ calcNutritionFit
+  ✔ should boost for high protein when highProteinNeed (0.1255ms)
+  ✔ should boost for balanced fat (12-20%) (0.0737ms)
+  ✔ should warn for fat > 25% (0.0554ms)
+  ✔ should warn for fat < 8% (0.0545ms)
+✔ calcNutritionFit (0.3953ms)
+▶ calcPreferenceFit
+  ✔ should score budget match (0.1096ms)
+  ✔ should score preferred goal match (0.0774ms)
+  ✔ should score preferred protein match (0.08ms)
+✔ calcPreferenceFit (0.3494ms)
+▶ calcDataConfidence
+  ✔ should return 5 for verified source tags (0.0786ms)
+  ✔ should return 5 for 国产 tag (0.0486ms)
+  ✔ should return 3 for no verified tag (0.0507ms)
+✔ calcDataConfidence (0.2528ms)
+▶ carb estimation with ash
+  ✔ should use real ash when available for carb calculation (0.1145ms)
+  ✔ should warn ash missing when carb_max evaluated and ash not present (0.0681ms)
+✔ carb estimation with ash (0.2442ms)
+▶ validateVaccinationLog
+  ✔ should reject missing date (0.5585ms)
+  ✔ should reject empty vaccine name (0.1821ms)
+  ✔ should reject vaccine name > 50 chars (0.1668ms)
+  ✔ should reject nextDueDate before date (0.1173ms)
+  ✔ should reject future date (0.0969ms)
+  ✔ should accept valid log (0.0891ms)
+✔ validateVaccinationLog (2.7952ms)
+▶ getDaysUntil
+  ✔ should return positive for future date (0.9337ms)
+  ✔ should return 0 for today (0.1229ms)
+  ✔ should return negative for past date (0.1552ms)
+  ✔ should return null for null input (0.135ms)
+  ✔ should return null for invalid format (0.1546ms)
+✔ getDaysUntil (1.734ms)
+▶ vaccinationLogFromFormData roundtrip
+  ✔ should roundtrip petId (0.1101ms)
+✔ vaccinationLogFromFormData roundtrip (0.1545ms)
+▶ VaccinationLogStore
+  ✔ should create with id and timestamps (0.2103ms)
+  ✔ should update and preserve id (0.1315ms)
+  ✔ should delete and return true (0.0721ms)
+  ✔ should filter upcoming and overdue (7.7488ms)
+  ✔ should handle corrupted JSON (0.7554ms)
+✔ VaccinationLogStore (9.7023ms)
+ℹ tests 116
+ℹ suites 24
+ℹ pass 116
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.3162

@@ -1,5 +1,6 @@
 const { PetProfile, wxStorage } = require('../../utils/index.js');
 const { recommend, validateInput } = require('../../utils/recommendation.js');
+const { loadBreeds } = require('../../utils/breeds-data');
 
 const speciesOptions = ['🐱 猫', '🐶 狗'];
 const sexOptions = ['未知', '公', '母'];
@@ -28,12 +29,7 @@ Page({
   },
 
   initBreeds() {
-    this.breeds = { cat: [], dog: [] };
-    try {
-      // breeds loaded via require at build time
-      const breedsData = require('../../data/breeds.js');
-      this.breeds = breedsData.breeds;
-    } catch { /* fallback: breeds loaded from API */ }
+    this.breeds = loadBreeds();
   },
 
   onSpeciesChange(e) {

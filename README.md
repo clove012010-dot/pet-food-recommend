@@ -2,8 +2,12 @@
 
 ## 快速开始
 
+> ⚠ **必须导入 `miniprogram/` 子目录本身，而非仓库根目录。**
+> 例如：`C:\...\pet-food-recommend\miniprogram\`
+> 若导入仓库根，会因找不到 `app.json` 而白屏。
+
 1. 下载[微信开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
-2. 导入项目 → 选择 `miniprogram/` 目录
+2. **导入项目 → 选择 `miniprogram/` 目录**（仓库根有 `IMPORT-HERE.md` 路标文件提醒）
 3. 填入 AppID（测试用 `touristappid`）
 4. 模拟器运行 → 点"预览"手机扫码
 
