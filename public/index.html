@@ -83,6 +83,16 @@ header p { color: #a08060; font-size: 14px; }
   .profile-bar { flex-direction: column; align-items: stretch; }
   .profile-actions { justify-content: center; flex-wrap: wrap; }
 }
+/* Tab navigation */
+.tab-bar { display: flex; gap: 0; margin: 0 0 12px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(139,94,60,0.08); }
+.tab-btn { flex: 1; padding: 12px 8px; border: none; background: #fdfaf7; color: #a08060; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent; }
+.tab-btn:hover { background: #fdf6f0; }
+.tab-btn.active { background: #fff; color: #8B5E3C; border-bottom-color: #8B5E3C; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+@media (max-width: 600px) {
+  .tab-bar { overflow-x: auto; }
+}
 .loading { text-align: center; padding: 40px; color: #a08060; }
 footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
 .toggle-section { cursor: pointer; user-select: none; color: #8B5E3C; font-size: 14px; font-weight: 600; padding: 8px 0; }
@@ -128,6 +138,13 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
     </div>
   </div>
 
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="recommend">📋 推荐</button>
+    <button class="tab-btn" data-tab="feeding">🍽 喂食</button>
+    <button class="tab-btn" data-tab="vaccination">💉 疫苗</button>
+  </div>
+
+  <div class="tab-panel active" data-panel="recommend">
   <form id="petForm" class="card">
     <h2>📋 基本信息</h2>
     <div class="form-row">
@@ -220,6 +237,10 @@ footer { text-align: center; padding: 20px; font-size: 12px; color: #c49a6c; }
   </form>
 
   <div id="results"></div>
+  </div>
+
+  <div class="tab-panel" data-panel="feeding"></div>
+  <div class="tab-panel" data-panel="vaccination"></div>
 
   <footer>
     <p>由 OpenCode 搭建 | 数据仅供参考，请遵医嘱</p>
@@ -262,6 +283,17 @@ document.getElementById('breedSelect').addEventListener('change', function () {
 });
 document.querySelector('[name="species"]').addEventListener('change', updateBreedOptions);
 loadBreeds();
+
+/* ===== Tab 切换 ===== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn.active').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel.active').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    const panel = document.querySelector(`.tab-panel[data-panel="${this.dataset.tab}"]`);
+    if (panel) panel.classList.add('active');
+  });
+});
 
 /* ===== 多宠物档案交互 ===== */
 const profileStore = new PetProfile.ProfileStore(window.localStorage);
