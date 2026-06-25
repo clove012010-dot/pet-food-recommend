@@ -59,7 +59,7 @@ function checkRateLimit(ip) {
   return true;
 }
 
-setInterval(() => {
+const rateLimitTimer = setInterval(() => {
   const now = Date.now();
   for (const [ip, timestamps] of rateLimitMap) {
     while (timestamps.length > 0 && timestamps[0] < now - RATE_LIMIT_WINDOW) {
@@ -180,8 +180,13 @@ const server = http.createServer((req, res) => {
 });
 
 server.timeout = 15000;
+server.on('close', () => clearInterval(rateLimitTimer));
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`宠物粮推荐引擎 v2 已启动: http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(`宠物粮推荐引擎 v2 已启动: http://localhost:${PORT}`);
+  });
+}
+
+module.exports = server;

@@ -1,10 +1,13 @@
-const { describe, it } = require('node:test');
+const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert');
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
 const { mergeRestrictions, getRulesByIds, validateInput, calcEnergy } = require('../src/recommendation');
+const { startServer, stopServer } = require('./setup');
+
+let testServer, testPort;
 
 describe('mergeRestrictions', () => {
   it('should merge max restrictions by taking the smaller value', () => {
@@ -125,6 +128,15 @@ describe('Static file security', () => {
 });
 
 describe('API server', () => {
+  before(async () => {
+    const { server, port } = await startServer();
+    testServer = server;
+    testPort = port;
+  });
+
+  after(async () => {
+    if (testServer) await stopServer(testServer);
+  });
   it('should return 400 for invalid input', async () => {
     const result = await postJSON('/api/recommend', { species: 'invalid' });
     assert.strictEqual(result.status, 400);
@@ -253,8 +265,8 @@ describe('API server', () => {
 });
 
 function getJSON(urlPath) {
-  return new Promise((resolve, reject) => {
-    const req = http.request({ hostname: 'localhost', port: 3000, path: urlPath, method: 'GET' }, res => {
+  return new Promise((resolve) => {
+    const req = http.request({ hostname: 'localhost', port: testPort, path: urlPath, method: 'GET' }, res => {
       let body = '';
       res.on('data', c => body += c);
       res.on('end', () => {
@@ -268,10 +280,10 @@ function getJSON(urlPath) {
 }
 
 function postJSON(urlPath, body) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const data = JSON.stringify(body);
     const req = http.request({
-      hostname: 'localhost', port: 3000, path: urlPath, method: 'POST',
+      hostname: 'localhost', port: testPort, path: urlPath, method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
     }, res => {
       let bodyStr = '';
