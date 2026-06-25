@@ -38,6 +38,9 @@
 .chart-row { display: flex; padding: 4px 6px; border-bottom: 1px solid var(--bg); }
 .chart-row text { flex: 1; text-align: center; }
 .chart-head { background: var(--bg); font-weight: 600; }
+.insight-box { background: #e8f4fd; border-left: 4px solid #5b9bd5; padding: 12px 16px; border-radius: 8px; margin-bottom: 14px; }
+.insight-item { font-size: 13px; color: var(--text); line-height: 1.8; display: block; }
+.h3 { font-size: 15px; color: var(--primary); margin-bottom: 8px; display: block; font-weight: 600; }
 .diary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--bg); font-size: 12px; }
 .alert-card { padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
 .alert-warning { background: #fff8e1; border: 1px solid #ffe082; }

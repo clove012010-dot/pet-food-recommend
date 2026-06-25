@@ -77,14 +77,10 @@
   <!-- 推荐结果 -->
   <view wx:if="{{showResults}}" class="card">
     <text class="h2">🏆 推荐结果</text>
-    <canvas type="2d" id="radarChart" style="width:100%;height:360px" />
-    <canvas type="2d" id="phosphorusChart" style="width:100%;height:260px" />
-    <view class="chart-table">
-      <view class="chart-row chart-head">
-        <text>粮</text><text>蛋白</text><text>脂肪</text><text>纤维</text><text>磷</text><text>钠</text><text>镁</text>
-      </view>
-      <view wx:for="{{recommendations.slice(0,5)}}" wx:key="id" class="chart-row">
-        <text>{{item.brand}}</text><text>{{item.protein}}%</text><text>{{item.fat}}%</text><text>{{item.fiber}}%</text><text>{{item.phosphorus}}%</text><text>{{item.sodium}}%</text><text>{{item.magnesium}}%</text>
+    <view wx:if="{{profileInsights && profileInsights.length > 0}}" class="insight-box">
+      <text class="h3">📊 品种分析</text>
+      <view wx:for="{{profileInsights}}" wx:key="*this" class="insight-item">
+        <text>· {{item}}</text>
       </view>
     </view>
     <view wx:for="{{recommendations}}" wx:key="id" class="food-card">

@@ -110,9 +110,7 @@ Page({
     if (!v.valid) { wx.showToast({ title: v.errors[0], icon: 'none' }); return; }
     const result = recommend(input);
     if (result.error) { wx.showToast({ title: '推荐失败', icon: 'none' }); return; }
-    this.setData({ showResults: true, recommendations: result.recommendations });
-    const pLimit = (result.diseaseInfo && result.diseaseInfo.restrictions && result.diseaseInfo.restrictions.phosphorus_max) || 1.0;
-    setTimeout(() => this.drawCharts(result.recommendations, pLimit), 200);
+    this.setData({ showResults: true, recommendations: result.recommendations, profileInsights: result.profileInsights || [] });
   },
 
   /* ===== 档案 ===== */

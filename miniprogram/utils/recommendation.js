@@ -162,13 +162,43 @@ function recommend(input) {
     return { ...f, feedingGuide: { gramsPerDay: gpd, mealsPerDay: mpd, note: '基于MER ' + am + 'kcal/天' } };
   });
 
+  const profileInsights = generateProfileInsights(breedInfo, drIds, lifeStage, bc, dr);
+
   return {
     inputSummary: { breedName: breedInfo ? breedInfo.fullName : breedId, species, ageMonths, weightKg, lifeStage },
     energy: { rer: energy.rer, mer: am, factors: energy.factors },
+    profileInsights,
     recommendations: recs,
     totalMatched: scored.length,
     totalExcluded: excluded.length
   };
 }
 
-module.exports = { recommend, validateInput, calcEnergy, getRulesByIds, mergeRestrictions, getLifeStageRules, scoreFood };
+function generateProfileInsights(breedInfo, diseases, lifeStage, bodyCondition, diseaseRules) {
+  const insights = [];
+  if (breedInfo && breedInfo.growthNeeds) {
+    if (breedInfo.growthNeeds.proneToObesity && bodyCondition === 'overweight') {
+      insights.push(breedInfo.fullName + '属于易胖品种, 当前超重, 需严格控制热量摄入, 选择低脂体重管理配方。');
+    } else if (breedInfo.growthNeeds.proneToObesity) {
+      insights.push(breedInfo.fullName + '属于易胖品种, 请注意控制日粮热量, 选择适中脂肪的配方避免过度肥胖。');
+    }
+    if (breedInfo.growthNeeds.healthRisks && breedInfo.growthNeeds.healthRisks.length > 0) {
+      insights.push(breedInfo.fullName + '常见健康风险: ' + breedInfo.growthNeeds.healthRisks.join('、') + '。');
+    }
+    if (breedInfo.growthNeeds.specialNutrients && breedInfo.growthNeeds.specialNutrients.length > 0) {
+      insights.push('重点营养: ' + breedInfo.growthNeeds.specialNutrients.join('、') + '。');
+    }
+  }
+  if (diseases && diseases.length > 0) {
+    for (const rule of diseaseRules) insights.push('【' + rule.name + '】' + rule.tips);
+  }
+  if (lifeStage === 'senior') {
+    insights.push('宠物已进入老年期, 已自动叠加老年营养规则(磷/钠/脂肪上限进一步收紧), 建议选择易消化、含关节保护和抗氧化剂的配方。');
+  }
+  if (bodyCondition === 'underweight') {
+    insights.push('当前体重偏瘦, 建议选择高能量密度配方帮助恢复健康体重。');
+  }
+  return insights;
+}
+
+module.exports = { recommend, validateInput, calcEnergy, getRulesByIds, mergeRestrictions, getLifeStageRules, scoreFood, generateProfileInsights };
