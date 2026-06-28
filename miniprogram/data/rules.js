@@ -2,8 +2,8 @@ module.exports = {
   "diseases": [
     {
       "id": "kidney",
-      "name": "肾病/肾功能不全",
-      "tips": "需控制磷、蛋白质含量，选择低磷处方粮或优质低蛋白粮",
+      "name": "肾脏护理/肾脏调理",
+      "tips": "需控制磷、蛋白质含量，选择低磷特殊配方或优质低蛋白粮",
       "restrictions": {
         "phosphorus_max": 0.8,
         "protein_max": 28,
@@ -21,7 +21,7 @@ module.exports = {
     },
     {
       "id": "pancreatitis",
-      "name": "胰腺炎",
+      "name": "胰腺护理",
       "tips": "必须极低脂肪，易消化蛋白质，避免高脂粮",
       "restrictions": {
         "fat_max": 12,
@@ -74,7 +74,7 @@ module.exports = {
     },
     {
       "id": "diabetes",
-      "name": "糖尿病",
+      "name": "血糖管理",
       "tips": "需要低碳水化合物、高蛋白配方稳定血糖",
       "restrictions": {
         "protein_min": 35,
@@ -131,7 +131,7 @@ module.exports = {
     },
     {
       "id": "heart",
-      "name": "心脏病",
+      "name": "心脏护理",
       "tips": "严格控制钠含量，补充牛磺酸和Omega-3",
       "restrictions": {
         "sodium_max": 0.25,
